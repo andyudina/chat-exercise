@@ -26,13 +26,17 @@
 post /users/ -> create nickname
 
 get /chats/?name=name -> get chats or users with name
+
 post /chats/ -> create group chat or chat with user
+
 put /chats/[chat-uuid]/ -> join group chat
 
 get /users/self/chats/ -> get all chats of the user
 
 get /users/self/chats/[chatuuid]/messages/?pg=pg -> list messages on page pg
+
 get /users/self/chats/[chatuuid]/ -> get chat info and first n messages
+
 post /users/self/chats/[chatuuid]/messages/ -> create a message
 
 
