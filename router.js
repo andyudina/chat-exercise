@@ -1,12 +1,12 @@
 "use strict";
 
-const express = require('express');
-
 // Import routes
-const testRoutes = require('./api/routes/test');
+const apiRoutes = require('./api/routes'),
+  authRoutes = require('./auth/routes');
 
 const router = (app)  => {
-  app.use('/', testRoutes);
+  app.use('/api', apiRoutes);
+  app.use('/auth', authRoutes);
 };
 
 module.exports = router;
