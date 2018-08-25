@@ -9,19 +9,19 @@ const googleStrategyCallback = require('../../../config/passport/google').google
 describe('Retrieve user using google credentials', () => {
 
   it('User model api is called with valid emai and google id', async () => {
-    let findOneOrCreateStub = sinon.stub();
+    const findOneOrCreateStub = sinon.stub();
     sinon.replace(User, 'findOneOrCreate', findOneOrCreateStub);
 
-    let email = 'test@gmail.com';
-    let googleID = 'test-google-id';
-    let profile = {
+    const email = 'test@gmail.com';
+    const googleID = 'test-google-id';
+    const profile = {
       emails: [{
         value: email
       }],
       id: googleID
     };
 
-    let doneStub = sinon.stub();
+    const doneStub = sinon.stub();
 
     await googleStrategyCallback(null, null, profile, doneStub);
     expect(
@@ -29,13 +29,13 @@ describe('Retrieve user using google credentials', () => {
   });
 
   it('If user retrieved successfully, it is passed to passport callback', async () => {
-    let user = {};
-    let findOneOrCreateFake = sinon.fake.returns(Promise.resolve(user));
+    const user = {};
+    const findOneOrCreateFake = sinon.fake.returns(Promise.resolve(user));
     sinon.replace(User, 'findOneOrCreate', findOneOrCreateFake);
 
-    let doneSpy = sinon.spy();
+    const doneSpy = sinon.spy();
 
-    let profile = {
+    const profile = {
       emails: [{
         value: 'test@google.com'
       }],
@@ -48,13 +48,13 @@ describe('Retrieve user using google credentials', () => {
 
   it('If user retrieveal falied, error is passed to passport callback', async () => {
 ;
-    let error = new Error;
-    let findOneOrCreateFake = sinon.fake.throws(error);
+    const error = new Error;
+    const findOneOrCreateFake = sinon.fake.throws(error);
     sinon.replace(User, 'findOneOrCreate', findOneOrCreateFake);
 
-    let doneSpy = sinon.spy();
+    const doneSpy = sinon.spy();
 
-    let profile = {
+    const profile = {
       emails: [{
         value: 'test@google.com'
       }],

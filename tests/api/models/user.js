@@ -13,28 +13,28 @@ describe('Static api for user model', () => {
   });
 
   it('User.getOrCreate return user with specified googleID, if such user exists', async () => {
-    let googleID = 'test-google-id';
-    let email = 'test@google.com';
-    let user = new User({
+    const googleID = 'test-google-id';
+    const email = 'test@google.com';
+    const user = new User({
       googleID: googleID,
       email: email
     });
     await user.save();
-    let retrievedUser = await User.findOneOrCreate(googleID, email);
+    const retrievedUser = await User.findOneOrCreate(googleID, email);
     expect(retrievedUser.id).to.equal(user.id);
   });
 
   it('User.getOrCreate creates new user with specified email, if user with specified googleID does not exist', async () => {
-    let googleID = 'test-google-id-2';
-    let email = 'test2@google.com';
-    let retrievedUser =  await User.findOneOrCreate(googleID, email);
+    const googleID = 'test-google-id-2';
+    const email = 'test2@google.com';
+    const retrievedUser =  await User.findOneOrCreate(googleID, email);
     expect(retrievedUser.email).to.equal(email);
   });
 
   it('User.getOrCreate throws error, if fetching user failed', async () => {
-    let findOneFake = sinon.stub().throws();
+    const findOneFake = sinon.stub().throws();
     sinon.replace(User, 'findOne', findOneFake);
-    let UserMock = sinon.mock(User);
+    const UserMock = sinon.mock(User);
     UserMock.expects('findOneOrCreate').once().throws();
     try {
       await User.findOneOrCreate('test-google-id', 'test@google.com');
@@ -46,9 +46,9 @@ describe('Static api for user model', () => {
   });
 
   it('User.getOrCreate throws error, if creating user failed', async () => {
-    let createFake = sinon.stub().throws();
+    const createFake = sinon.stub().throws();
     sinon.replace(User, 'create', createFake);
-    let UserMock = sinon.mock(User);
+    const UserMock = sinon.mock(User);
     UserMock.expects('findOneOrCreate').once().throws();
     try {
       await User.findOneOrCreate('test-google-id', 'test@google.com');

@@ -8,8 +8,8 @@ const apiRequiresAuthentication = require('../../middleware/authenticate').apiRe
 describe('Ensure user authentication', () => {
 
   it('Middleware passes request to next step if user is authenticated', () => {
-    let nextSpy = sinon.spy();
-    let req = {
+    const nextSpy = sinon.spy();
+    const req = {
       isAuthenticated() {return true}
     };
     apiRequiresAuthentication(req, null, nextSpy);
@@ -17,13 +17,14 @@ describe('Ensure user authentication', () => {
   });
 
   it('401 error returned if user is not authenticated', async () => {
-    let req = {
+    const req = {
       isAuthenticated() {return false}
     };
-    let res = {
-      status() {}
+    const res = {
+      status() {},
+      end() {}
     };
-    let statusSpy = sinon.spy();
+    const statusSpy = sinon.spy();
     sinon.replace(res, 'status', statusSpy);
     apiRequiresAuthentication(req, res, null);
     expect(statusSpy.withArgs(401).calledOnce).to.be.true;
