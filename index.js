@@ -1,24 +1,23 @@
 "use strict";
 
+// Load env variables from .env file
+require('dotenv').config();
+
 const express = require('express'),
-  bodyParser = require('body-parser'),
-  logger = require('morgan'),
   mongoose = require('mongoose'),
   passport = require('passport');
 
 const authConfig = require('./config/passport/google'),
   config = require('./config'),
-  router = require('./router');
+  router = require('./router'),
+  serverConfig =  require('./config/express/server');
 
 // Configure authorisation with passport
 authConfig(passport);
 
 // Configure server
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json());
-app.use(logger('dev'));
-app.use(passport.initialize());
+serverConfig(app, passport);
 
 // Configure routes to be served
 router(app);

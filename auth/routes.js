@@ -1,5 +1,4 @@
 // Authorisation routes with google oauth
-// This is not part of chat REST api
 "use strict";
 
 const express = require('express'),
