@@ -9,11 +9,7 @@ describe('Authentication controller', () => {
     let testEmail = 'test@gmail.com';
     let req = {
       user: {
-        profile: {
-          emails: [{
-            value: testEmail
-          }]
-        }
+        email: testEmail
       }
     };
     let resp = {

@@ -7,6 +7,9 @@ const express = require('express'),
   mongoose = require('mongoose'),
   passport = require('passport');
 
+// Load models
+require('./api/models');
+
 const authConfig = require('./config/passport/google').configure,
   config = require('./config'),
   router = require('./router'),
