@@ -1,11 +1,25 @@
 // Passport configuration
 "use strict";
 
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const mongoose = require('mongoose'),
+  GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 const config = require('../');
 
-module.exports = (passport) => {
+const User = mongoose.model('User');
+
+const googleStrategyCallback = async (token, refreshToken, profile, done) => {
+  let email = profile.emails[0].value;
+  let user;
+  try {
+    user = await User.findOneOrCreate(profile.id, email);
+  } catch (error) {
+    return done(error);
+  }
+  return done(null, user);
+};
+
+module.exports.configure = (passport) => {
   passport.serializeUser((user, done) => {
     done(null, user);
   });
@@ -19,12 +33,9 @@ module.exports = (passport) => {
       clientSecret: config.google.clientSecret,
       callbackURL: config.google.callbackURL,
     },
-    (token, refreshToken, profile, done) => {
-      // Create new user here
-      return done(null, {
-        profile: profile,
-        token: token
-      });
-    })
-  );
+    googleStrategyCallback
+  ));
 };
+
+// For tests
+module.exports.googleStrategyCallback = googleStrategyCallback;

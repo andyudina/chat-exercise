@@ -7,7 +7,7 @@ const express = require('express'),
   mongoose = require('mongoose'),
   passport = require('passport');
 
-const authConfig = require('./config/passport/google'),
+const authConfig = require('./config/passport/google').configure,
   config = require('./config'),
   router = require('./router'),
   serverConfig =  require('./config/express/server');
