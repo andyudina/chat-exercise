@@ -24,15 +24,18 @@ router(app);
 
 // Connect to mongoDB
 const connect = () => {
-  const options = { server: { socketOptions: { keepAlive: 1 } } };
-  return mongoose.connect(config.db, options).connection;
+  mongoose.connect(config.db, { useNewUrlParser: true });
+  mongoose.connection.on('error', console.log);
+  mongoose.connection.on(
+    'disconnected',
+    () => {console.log('Mongoose default connection is disconnected')}
+  );
 }
+connect();
+
 // Start express app on successful connection
 const listen = () => {
   app.listen(config.port, config.host);
   console.log(`Express app started on ${config.host}:${config.port}`);
 }
-connect()
-  .on('error', console.log)
-  .on('disconnected', connect)
-  .once('open', listen);
+mongoose.connection.once('open', listen);

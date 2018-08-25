@@ -6,6 +6,6 @@ const TestController = require('../controllers/test');
 
 const testRouter = express.Router();
 testRouter.route('/')
-    .get(TestController.getTestApi);
+  .get(TestController.getTestApi);
 
 module.exports = testRouter;
