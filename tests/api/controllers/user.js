@@ -3,6 +3,8 @@
 const expect = require('chai').expect,
   sinon = require('sinon');
 
+// User import left here, so UserSchema is registered
+// before controller is imported
 const User = require('../../../api/models/user'),
   UserController = require('../../../api/controllers/user'),
   utils = require('../../_utils')
@@ -12,28 +14,7 @@ describe('Set user nickname', () => {
     utils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(async () => {
-    // Create user
-    this.user = User({
-      email: 'test-email@google.com',
-      googleID: 'test-google-id'
-    });
-    await this.user.save();
-
-    // Set up request
-    const req = {
-      user: this.user,
-      body: {}
-    };
-    this.req = req;
-
-    // Set up response
-    const res = {
-      json() {}
-    }
-    res.status = () => {return res;};
-    this.res = res;
-  });
+  beforeEach(utils.setUpControllerTests.bind(this));
   
   it('200 OK returned if nickname updated successfully', async () => {
     this.req.body.nickname = 'test';
@@ -87,6 +68,51 @@ describe('Set user nickname', () => {
     UserControllerMock.expects('setNickname').once().throws();
     try {
       await UserController.setNickname(this.req, this.res);
+    } catch (error) {
+      // Skip this section
+      // Error will be verified by mock
+    }
+    UserControllerMock.verify();
+  });
+
+  afterEach(async () => {
+    sinon.restore();
+    await User.remove({}).exec();
+  });
+
+  after((done) => {
+    utils.dropDbAfterTest(done);
+  });
+});
+
+describe('Get current user', () => {
+  before((done) => {
+    utils.setUpDbBeforeTest(done);
+  });
+  
+  beforeEach(utils.setUpControllerTests.bind(this));
+
+  it('200 OK returned if current user retrieved successfully', async () => {
+    const statusStub = sinon.stub().returns(this.res);
+    sinon.replace(this.res, 'status', statusStub);
+    await UserController.getCurrentUser(this.req, this.res);
+    expect(statusStub.withArgs(200).calledOnce).to.be.true;
+  });
+
+  it('User returned on successful request', async () => {
+    const jsonSpy = sinon.spy();
+    sinon.replace(this.res, 'json', jsonSpy);
+    await UserController.getCurrentUser(this.req, this.res);
+    expect(jsonSpy.getCall(0).args[0].id).to.be.equal(this.user.id);
+  });
+
+  it('Throw error is user retrieval failed', async () => {
+    const findByIdStub = sinon.stub().throws();
+    sinon.replace(User, 'findById', findByIdStub);
+    const UserControllerMock = sinon.mock(UserController);
+    UserControllerMock.expects('getCurrentUser').once().throws();
+    try {
+      await UserController.getCurrentUser(this.req, this.res);
     } catch (error) {
       // Skip this section
       // Error will be verified by mock

@@ -48,7 +48,7 @@ describe('Retrieve user using google credentials', () => {
 
   it('If user retrieveal falied, error is passed to passport callback', async () => {
 ;
-    const error = new Error;
+    const error = new Error();
     const findOneOrCreateFake = sinon.fake.throws(error);
     sinon.replace(User, 'findOneOrCreate', findOneOrCreateFake);
 

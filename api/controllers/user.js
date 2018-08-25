@@ -45,4 +45,26 @@ module.exports.setNickname = async (req, res) => {
     throw error;
   }
   res.status(200).json(user);
-}
+};
+
+module.exports.getCurrentUser = async (req, res) => {
+  // Return current user
+  // Success:
+  // Returns 200 OK
+  // {
+  //    _id: String,
+  //    googleID: String,
+  //    email: String,
+  //    nickname: String,
+  //    createdAt: Date,
+  // }
+  let user;
+  try {
+    user = await User.findById(req.user._id).exec();
+  } catch (error) {
+    // Unexpected error - log and fail
+    console.log(error);
+    throw error;
+  }
+  res.status(200).json(user);
+};
