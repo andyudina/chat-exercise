@@ -1,10 +1,10 @@
 "use strict";
 
-const baseConfig = require('./base');
-const secretConfig = require('./secret');
+const constants = require('./const');
+const env = require('./env');
 
 module.exports = Object.assign(
   {},
-  baseConfig,
-  secretConfig
+  constants,
+  env
 );

@@ -17,6 +17,3 @@ node_modules/
 
 # Optional npm cache directory
 .npm
-
-# Secret config
-config/secret.js

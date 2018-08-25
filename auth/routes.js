@@ -5,14 +5,14 @@
 const express = require('express'),
   passport = require('passport');
 
-const authConstants = require('./constants');
+const config = require('../config'),
+  AuthController = require('./controller');
 
-const AuthController = require('./controller');
 const authRouter = express.Router();
 
 // Initiate authorisation through google
 const googleOauthMiddleware = passport.authenticate('google', {
-  scope: authConstants.googleOauthScopes
+  scope: config.googleOauthScopes
 });
 authRouter.route('/google')
   .get(googleOauthMiddleware);
