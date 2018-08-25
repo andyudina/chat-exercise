@@ -32,8 +32,8 @@ describe('Static api for user model', () => {
   });
 
   it('User.getOrCreate throws error, if fetching user failed', async () => {
-    const findOneFake = sinon.stub().throws();
-    sinon.replace(User, 'findOne', findOneFake);
+    const findOneStub = sinon.stub().throws();
+    sinon.replace(User, 'findOne', findOneStub);
     const UserMock = sinon.mock(User);
     UserMock.expects('findOneOrCreate').once().throws();
     try {
@@ -46,8 +46,8 @@ describe('Static api for user model', () => {
   });
 
   it('User.getOrCreate throws error, if creating user failed', async () => {
-    const createFake = sinon.stub().throws();
-    sinon.replace(User, 'create', createFake);
+    const createStub = sinon.stub().throws();
+    sinon.replace(User, 'create', createStub);
     const UserMock = sinon.mock(User);
     UserMock.expects('findOneOrCreate').once().throws();
     try {

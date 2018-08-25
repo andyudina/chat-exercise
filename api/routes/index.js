@@ -3,9 +3,9 @@
 
 const express = require('express');
 
-const testRoutes = require('./test');
+const userRoutes = require('./user');
 
 const apiRoutes = express.Router();
-apiRoutes.use('/test', testRoutes);
+apiRoutes.use('/users', userRoutes);
 
 module.exports = apiRoutes;
