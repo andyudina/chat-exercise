@@ -40,8 +40,8 @@ post /users/self/chats/[chatuuid]/messages/ -> create a message
 
 * User
     * uuid
-    * token
     * nickname
+    * email
     * chats [ [uuid] ]
 
 * Chat
