@@ -4,8 +4,8 @@ const sinon = require('sinon');
 
 const AuthController = require('../../auth/controller');
 
-describe('Authentication controller', function() {
-  it('Display user email on successfull authentication', function() {
+describe('Authentication controller', () => {
+  it('Display user email on successfull authentication', () => {
     let testEmail = 'test@gmail.com';
     let req = {
       user: {
@@ -20,9 +20,9 @@ describe('Authentication controller', function() {
       status: () => {return resp},
       json: () => {}
     };
-    let jsonMock = sinon.mock(resp);
-    jsonMock.expects('json').once().withArgs({'email': testEmail});
+    let respMock = sinon.mock(resp);
+    respMock.expects('json').once().withArgs({'email': testEmail});
     AuthController.processSuccessfulAuth(req, resp);
-    jsonMock.verify();
+    respMock.verify();
   });
 });
