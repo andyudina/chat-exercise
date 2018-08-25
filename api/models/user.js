@@ -31,7 +31,7 @@ UserSchema.statics = {
     // Attempt to retrieve user by id, provided by google
     // Create if not exist
     // Use email only when create new user
-    // TODO: what if email changed for same googlID?
+    // TODO: what if email changed for same googleID?
     let user;
     try {
       user = await this.findOne({googleID: googleID}).exec();

@@ -2,10 +2,11 @@
 
 const express = require('express');
 
-const TestController = require('../controllers/test');
+const apiRequiresAuthentication = require('../../middleware/authenticate').apiRequiresAuthentication,
+  TestController = require('../controllers/test');
 
 const testRouter = express.Router();
 testRouter.route('/')
-  .get(TestController.getTestApi);
+  .get(apiRequiresAuthentication, TestController.getTestApi);
 
 module.exports = testRouter;

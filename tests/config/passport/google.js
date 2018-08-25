@@ -42,7 +42,6 @@ describe('Retrieve user using google credentials', () => {
       id: 'googleID'
     };
     await googleStrategyCallback(null, null, profile, doneSpy);
-    console.log(doneSpy.getCall(0).args);
     expect(
       doneSpy.withArgs(null, user).calledOnce).to.be.true;
   });
