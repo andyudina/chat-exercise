@@ -1,4 +1,6 @@
-// Represent all REST API routes
+// All REST API routes
+"use strict";
+
 const express = require('express');
 
 const testRoutes = require('./test');
