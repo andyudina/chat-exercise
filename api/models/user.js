@@ -20,11 +20,39 @@ const UserSchema = new Schema({
     type: String,
     required: false
   },
-  createdAt: { 
+  createdAt: {
     type: Date,
-    default : Date.now 
+    default: Date.now 
   },
+  chats: {
+    type: [
+      {
+        type: Schema.ObjectId,
+        ref: 'Chat'
+      },
+    ],
+    default: []
+  }
 });
+
+UserSchema.methods = {
+  async addChat(chatId) {
+    // Add chatId to chats if not exist
+    const chatIdAsObjectId = mongoose.mongo.ObjectId(chatId);
+    const update = {
+      $addToSet: { chats: chatIdAsObjectId }
+    };
+    try {
+      // TODO what if user don't have chats array?
+      // update will silently fail
+      await User.findByIdAndUpdate(this._id, update).exec();
+    } catch (error) {
+      // Log error and re-throw
+      console.log(error);
+      throw error;
+    }
+  }
+}
 
 UserSchema.statics = {
   async findOneOrCreate(googleID, email) {
@@ -57,6 +85,7 @@ UserSchema.statics = {
     }
     return user;
   }
+
 };
 
 

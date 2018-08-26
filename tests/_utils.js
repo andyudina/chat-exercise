@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 
 const config = require('../config'),
+  Chat = require('../api/models/chat'),
   User = require('../api/models/user');
 
 const setUpDbBeforeTest = (done) => {
@@ -47,9 +48,22 @@ async function setUpControllerTests() {
   this.res = res;
 };
 
+async function createChatAndUser() {
+  // Helper to set up chat and user before test case is run
+  this.user = User({
+    email: 'test-email@google.com',
+    googleID: 'test-google-id'
+  });
+  await this.user.save();
+
+  this.chat = Chat({});
+  await this.chat.save();
+}
+
 module.exports = {
   setUpDbBeforeTest,
   dropDbAfterTest,
 
-  setUpControllerTests
+  setUpControllerTests,
+  createChatAndUser
 }

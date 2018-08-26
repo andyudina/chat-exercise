@@ -1,18 +1,19 @@
 "use strict";
 
 const expect = require('chai').expect,
-  mongoose = require('mongoose'),
   sinon = require('sinon');
 
-const User = require('../../../api/models/user'),
+// Import models to register them with mongoose
+const Chat = require('../../../api/models/chat'),
+  User = require('../../../api/models/user'),
   utils = require('../../_utils');
 
-describe('Static api for user model', () => {
+describe('findOneOrCreate static api for user model', () => {
   before((done) => {
     utils.setUpDbBeforeTest(done);
   });
 
-  it('User.getOrCreate return user with specified googleID, if such user exists', async () => {
+  it('User.findOneOrCreate return user with specified googleID, if such user exists', async () => {
     const googleID = 'test-google-id';
     const email = 'test@google.com';
     const user = new User({
@@ -24,14 +25,14 @@ describe('Static api for user model', () => {
     expect(retrievedUser.id).to.equal(user.id);
   });
 
-  it('User.getOrCreate creates new user with specified email, if user with specified googleID does not exist', async () => {
+  it('User.findOneOrCreate creates new user with specified email, if user with specified googleID does not exist', async () => {
     const googleID = 'test-google-id-2';
     const email = 'test2@google.com';
     const retrievedUser =  await User.findOneOrCreate(googleID, email);
     expect(retrievedUser.email).to.equal(email);
   });
 
-  it('User.getOrCreate throws error, if fetching user failed', async () => {
+  it('User.findOneOrCreate throws error, if fetching user failed', async () => {
     const findOneStub = sinon.stub().throws();
     sinon.replace(User, 'findOne', findOneStub);
     const UserMock = sinon.mock(User);
@@ -45,7 +46,7 @@ describe('Static api for user model', () => {
     UserMock.verify();
   });
 
-  it('User.getOrCreate throws error, if creating user failed', async () => {
+  it('User.findOneOrCreate throws error, if creating user failed', async () => {
     const createStub = sinon.stub().throws();
     sinon.replace(User, 'create', createStub);
     const UserMock = sinon.mock(User);
@@ -61,6 +62,54 @@ describe('Static api for user model', () => {
 
   afterEach(() => {
     sinon.restore();
+  });
+
+  after((done) => {
+    utils.dropDbAfterTest(done);
+  });
+
+});
+
+describe('addChat api for user model', () => {
+  before((done) => {
+    utils.setUpDbBeforeTest(done);
+  });
+
+  beforeEach(utils.createChatAndUser.bind(this));
+
+  it('Add chat if not exist', async () => {
+    await this.user.addChat(this.chat._id);
+    const updatedUser = await User.findById(this.user._id).exec();
+    expect(updatedUser.chats[0].toString()).to.be.equal(this.chat.id);
+  });
+
+  it('Do not add chat if it already added to array', async () => {
+    await this.user.addChat(this.chat._id);
+    await this.user.addChat(this.chat._id);
+    const updatedUser = await User.findById(this.user._id).exec();
+    // Chat was added only once
+    expect(updatedUser.chats[0].toString()).to.be.equal(this.chat.id);
+  });
+
+
+  it('Throw error if db request failed', async () => {
+    const findOneAndUpdateStub = sinon.stub().throws();
+    sinon.replace(User, 'findOneAndUpdate', findOneAndUpdateStub);
+    const userMock = sinon.mock(this.user);
+    userMock.expects('addChat').once().throws();
+    try {
+      await this.user.addChat(this.chat._id);
+    } catch (error) {
+      // Skip this section
+      // Error will be verified by mock
+    }
+    userMock.verify();
+  });
+
+  afterEach(async () => {
+    sinon.restore();
+    await User.remove({}).exec();
+    await Chat.remove({}).exec();
   });
 
   after((done) => {
