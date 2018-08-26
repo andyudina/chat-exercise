@@ -28,7 +28,8 @@ module.exports.setNickname = async (req, res) => {
   //     [field]: [errorMessage]
   //   }
   // }
-  if (!(req.body.nickname)) {
+  const nickname = req.body.nickname;
+  if (!(nickname)) {
     res.status(400).json({errors: {nickname: 'This field is required'}});
     return;
   }
@@ -36,7 +37,7 @@ module.exports.setNickname = async (req, res) => {
   try {
 
     user = await User.findByIdAndUpdate(req.user._id,
-      { $set: { nickname: req.body.nickname }},
+      { $set: { nickname: nickname }},
       {new: true}
     ).exec();
   } catch (error) {
@@ -94,7 +95,8 @@ module.exports.searchByNickname = async (req, res) => {
   //     [field]: [errorMessage]
   //   }
   // }
-  if (!(req.body.nickname)) {
+  const nickname = req.query.nickname;
+  if (!(nickname)) {
     res.status(400).json({errors: {nickname: 'This field is required'}});
     return;
   }
@@ -102,7 +104,7 @@ module.exports.searchByNickname = async (req, res) => {
   try {
     users = await User
       .find(
-        { $text: { $search: req.body.nickname, $caseSensitive: false } },
+        { $text: { $search: nickname, $caseSensitive: false } },
         { score: {$meta: 'textScore' } })
       .sort({ score: { $meta: 'textScore' } })
       .select({_id: 1, nickname: 1})

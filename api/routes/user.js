@@ -10,6 +10,9 @@ const userRouter = express.Router();
 userRouter.route('/')
   .put(apiRequiresAuthentication, UserController.setNickname);
 
+userRouter.route('/')
+  .get(apiRequiresAuthentication, UserController.searchByNickname);
+
 userRouter.route('/self')
   .get(apiRequiresAuthentication, UserController.getCurrentUser);
 

@@ -53,7 +53,8 @@ async function setUpControllerTests() {
 
   // Set up request
   const req = {
-    body: {}
+    body: {},
+    query: {}
   };
   this.req = req;
 

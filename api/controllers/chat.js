@@ -30,7 +30,8 @@ module.exports.searchByName = async (req, res) => {
   //     [field]: [errorMessage]
   //   }
   // }
-  if (!(req.body.name)) {
+  const name = req.query.name;
+  if (!(name)) {
     res.status(400).json({errors: {name: 'This field is required'}});
     return;
   }
@@ -38,7 +39,7 @@ module.exports.searchByName = async (req, res) => {
   try {
     chats = await Chat
       .find(
-        { $text: { $search: req.body.name, $caseSensitive: false } },
+        { $text: { $search: name, $caseSensitive: false } },
         { score: {$meta: 'textScore' } })
       .sort({ score: { $meta: 'textScore' } })
       .select({_id: 1, name: 1})

@@ -138,7 +138,7 @@ describe('Search by nickname', () => {
   beforeEach(utils.setUpControllerTestsWithUser.bind(this));
   
   it('200 OK returned if request completed successfully', async () => {
-    this.req.body.nickname = 'test';
+    this.req.query.nickname = 'test';
     const statusStub = sinon.stub().returns(this.res);
     sinon.replace(this.res, 'status', statusStub);
     await UserController.searchByNickname(this.req, this.res);
@@ -172,7 +172,7 @@ describe('Search by nickname', () => {
       googleID: 'test-google-id-3'
     });
     await noMatchUser.save();
-    this.req.body.nickname = nickname;
+    this.req.query.nickname = nickname;
     const jsonSpy = sinon.spy();
     sinon.replace(this.res, 'json', jsonSpy);
     await UserController.searchByNickname(this.req, this.res);

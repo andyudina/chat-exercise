@@ -15,7 +15,7 @@ describe('Search by name', () => {
   beforeEach(utils.setUpControllerTests.bind(this));
   
   it('200 OK returned if request completed successfully', async () => {
-    this.req.body.name = 'test';
+    this.req.query.name = 'test';
     const statusStub = sinon.stub().returns(this.res);
     sinon.replace(this.res, 'status', statusStub);
     await ChatController.searchByName(this.req, this.res);
@@ -43,7 +43,7 @@ describe('Search by name', () => {
       name: 'no match',
     });
     await noMatchChat.save();
-    this.req.body.name = name;
+    this.req.query.name = name;
     const jsonSpy = sinon.spy();
     sinon.replace(this.res, 'json', jsonSpy);
     await ChatController.searchByName(this.req, this.res);
