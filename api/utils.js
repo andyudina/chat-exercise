@@ -10,6 +10,7 @@ module.exports.processErrors = (error) => {
 
 module.exports.formatListResponse = (list, fields) => {
   // Clean up all fields from response except provided fields and _id
+  // TODO cover with tests
   const formatItem = (item) => {
     return Object.assign(
       ...fields.map((field) => {

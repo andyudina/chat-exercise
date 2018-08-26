@@ -10,4 +10,7 @@ const chatRouter = express.Router();
 chatRouter.route('/')
   .get(apiRequiresAuthentication, ChatController.searchByName);
 
+chatRouter.route('/')
+  .post(apiRequiresAuthentication, ChatController.createGroupChat);
+
 module.exports = chatRouter;

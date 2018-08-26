@@ -74,10 +74,7 @@ module.exports.getCurrentUser = async (req, res) => {
 module.exports.searchByNickname = async (req, res) => {
   // Return users filtered by nickname
   // Returns also current user (if found) by design
-  // Expects requests in format:
-  // {
-  //   nickname: String
-  // }
+  // Expects nickname in query paramaters
   // Success:
   // Returns 200 OK
   // {
