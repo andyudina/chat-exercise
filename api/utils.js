@@ -28,3 +28,12 @@ module.exports.formatListResponse = (list, fields) => {
     )
   );
 }
+
+module.exports.convertIdToString = (list) => {
+  // Converts all ids to string for all elements in array
+  return list.map((item) => {
+    let itemCopy = {...item._doc};
+    itemCopy._id = item._id.toString();
+    return itemCopy;
+  });
+}

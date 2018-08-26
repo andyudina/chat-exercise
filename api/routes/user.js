@@ -16,4 +16,7 @@ userRouter.route('/')
 userRouter.route('/self')
   .get(apiRequiresAuthentication, UserController.getCurrentUser);
 
+userRouter.route('/self/chats')
+  .get(apiRequiresAuthentication, UserController.getAllChatsForUser);
+
 module.exports = userRouter;
