@@ -65,7 +65,7 @@ describe('findOneOrCreate static api for user model', () => {
   });
 
   after((done) => {
-    utils.dropDbAfterTest(done);
+    utils.cleanAndCloseDbAfterTest(done);
   });
 
 });
@@ -113,7 +113,7 @@ describe('addChat api for user model', () => {
   });
 
   after((done) => {
-    utils.dropDbAfterTest(done);
+    utils.cleanAndCloseDbAfterTest(done);
   });
 
 });

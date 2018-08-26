@@ -7,7 +7,8 @@ const Schema = mongoose.Schema;
 const ChatSchema = new Schema({
   name: {
     type: String,
-    required: false
+    required: false,
+    text: true
   },
   isGroupChat: {
     type: Boolean,

@@ -53,7 +53,7 @@ describe('addUser api for chat model', () => {
   });
 
   after((done) => {
-    utils.dropDbAfterTest(done);
+    utils.cleanAndCloseDbAfterTest(done);
   });
 
 });
@@ -139,7 +139,7 @@ describe('join static api for chat model', () => {
   });
 
   after((done) => {
-    utils.dropDbAfterTest(done);
+    utils.cleanAndCloseDbAfterTest(done);
   });
 
 });

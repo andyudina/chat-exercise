@@ -2,7 +2,8 @@
 
 const mongoose = require('mongoose');
 
-const config = require('../config'),
+const apiUtils = require('../api/utils'),
+  config = require('../config'),
   Chat = require('../api/models/chat'),
   User = require('../api/models/user');
 
@@ -14,12 +15,19 @@ const setUpDbBeforeTest = (done) => {
   connection.once('open', done);
 }
 
-const dropDbAfterTest = (done) => {
+const cleanAndCloseDbAfterTest = (done) => {
   // Drop test database and disconect from mongoDB
   const connection = mongoose.connection;
-  connection.db.dropDatabase(
-    () => {mongoose.connection.close(done);}
-  );
+  // Clean up all collections
+  // Clean up user collection
+  User.remove({}, (err) => {
+    if (err) { throw err; }
+    // Clean up chat collection
+    Chat.remove({}, (err) => {
+      if (err) { throw err; }
+      mongoose.connection.close(done);
+    });
+  });
 }
 
 async function setUpControllerTests() {
@@ -62,7 +70,7 @@ async function createChatAndUser() {
 
 module.exports = {
   setUpDbBeforeTest,
-  dropDbAfterTest,
+  cleanAndCloseDbAfterTest,
 
   setUpControllerTests,
   createChatAndUser

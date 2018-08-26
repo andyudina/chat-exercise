@@ -18,7 +18,8 @@ const UserSchema = new Schema({
   },
   nickname: {
     type: String,
-    required: false
+    required: false,
+    text: true
   },
   createdAt: {
     type: Date,
@@ -87,7 +88,6 @@ UserSchema.statics = {
   }
 
 };
-
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;
