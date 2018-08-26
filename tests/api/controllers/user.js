@@ -14,7 +14,7 @@ describe('Set user nickname', () => {
     utils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.setUpControllerTests.bind(this));
+  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
   
   it('200 OK returned if nickname updated successfully', async () => {
     this.req.body.nickname = 'test';
@@ -90,7 +90,7 @@ describe('Get current user', () => {
     utils.setUpDbBeforeTest(done);
   });
   
-  beforeEach(utils.setUpControllerTests.bind(this));
+  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
 
   it('200 OK returned if current user retrieved successfully', async () => {
     const statusStub = sinon.stub().returns(this.res);
@@ -135,7 +135,7 @@ describe('Search by nickname', () => {
     utils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.setUpControllerTests.bind(this));
+  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
   
   it('200 OK returned if request completed successfully', async () => {
     this.req.body.nickname = 'test';

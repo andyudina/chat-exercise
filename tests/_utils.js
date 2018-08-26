@@ -30,9 +30,8 @@ const cleanAndCloseDbAfterTest = (done) => {
   });
 }
 
-async function setUpControllerTests() {
-  // Set up environment for controller tests:
-  // Create user and define stubs for request and response
+async function setUpControllerTestsWithUser() {
+  // Set up environment for controller tests and create user
 
   // Create user
   this.user = User({
@@ -41,9 +40,19 @@ async function setUpControllerTests() {
   });
   await this.user.save();
 
+  // TODO: decouple from setUpControllerTests
+  // Now this function is dependant on setUpControllerTests
+  // implementation
+  setUpControllerTests.bind(this)();
+  this.req.user = this.user;
+};
+
+async function setUpControllerTests() {
+  // Set up environment for controller tests
+  // Define stubs for request and response
+
   // Set up request
   const req = {
-    user: this.user,
     body: {}
   };
   this.req = req;
@@ -55,6 +64,7 @@ async function setUpControllerTests() {
   res.status = () => {return res;};
   this.res = res;
 };
+
 
 async function createChatAndUser() {
   // Helper to set up chat and user before test case is run
@@ -73,5 +83,6 @@ module.exports = {
   cleanAndCloseDbAfterTest,
 
   setUpControllerTests,
+  setUpControllerTestsWithUser,
   createChatAndUser
 }
