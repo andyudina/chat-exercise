@@ -108,12 +108,7 @@ module.exports.searchByNickname = async (req, res) => {
       .select({_id: 1, nickname: 1})
       .exec();
     // Manually remove score fron response
-    users = users.map(
-      user => ({
-        _id: user._id.toString(),
-        nickname: user.nickname
-      }
-    ));
+    users = utils.formatListResponse(users, ['nickname']);
   } catch (error) {
     // Unexpected error occured
     // Better fail fast
