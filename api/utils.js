@@ -47,7 +47,8 @@ module.exports.replaceDataInInnerArray = (documents, innerArrayField, itemsMap) 
   // Replace ids with elements from itemsMap in inner array of each document
   return documents.map(
     (doc) => {
-      let docCopy = {...doc};
+
+      let docCopy = {...(doc._doc || doc)};
       docCopy[innerArrayField] = replaceDataInArray(
         doc[innerArrayField], itemsMap);
      return docCopy;

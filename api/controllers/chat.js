@@ -97,7 +97,8 @@ module.exports.createGroupChat = async (req, res) => {
     res.status(400).json(errorResp);
     return;
   }
-  res.status(200).json(chat);  
+  const updatedChat = await User.addUserToChatById(req.user._id, chat);
+  res.status(200).json(updatedChat);
 };
 
 module.exports.joinGroupChat = async (req, res) => {
@@ -149,16 +150,7 @@ module.exports.joinGroupChat = async (req, res) => {
     return;
   }
   // Join chat
-  let updatedChat;
-  try {
-    const user = await User.findById(req.user._id);
-    updatedChat = await user.joinChat(chat);
-    // Manually remove score fron response
-  } catch (error) {
-    // Log and re-throw error
-    console.log(error);
-    throw error;
-  }
+  let updatedChat = await User.addUserToChatById(req.user._id, chat);
   // Enrich user details
   updatedChat = await Chat.populateOneChatWithUserDetails(updatedChat);
   res.status(200).json(updatedChat);  

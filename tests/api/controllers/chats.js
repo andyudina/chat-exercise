@@ -105,7 +105,7 @@ describe('Create new group chat', () => {
     utils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.setUpControllerTests.bind(this));
+  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
   
   it('200 OK returned if chat created successfully', async () => {
     this.req.body.name = 'new test';
@@ -147,6 +147,16 @@ describe('Create new group chat', () => {
     sinon.replace(this.res, 'json', jsonSpy);
     await ChatController.createGroupChat(this.req, this.res);
     expect(jsonSpy.getCall(0).args[0].name).to.be.equal(name);
+  });
+
+  it('Add user to created chat', async () => {
+    this.req.body.name = 'name';
+
+    const addUserToChatByIdSpy = sinon.spy();
+    sinon.replace(User, 'addUserToChatById', addUserToChatByIdSpy);
+
+    await ChatController.createGroupChat(this.req, this.res);
+    expect(addUserToChatByIdSpy.calledOnce).to.be.true;
   });
 
   it('Validation errors returned if name is not provided', async () => {
@@ -194,6 +204,7 @@ describe('Create new group chat', () => {
 
   afterEach(async () => {
     sinon.restore();
+    await User.remove({}).exec();
     await Chat.remove({}).exec();
   });
 

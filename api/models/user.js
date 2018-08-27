@@ -64,6 +64,7 @@ UserSchema.methods = {
     // TODO: transaction needed here
     await this.addChat(chat._id);
     const updatedChat = await chat.addUser(this._id);
+    // TODO does it make sense to return updated chat here?
     return updatedChat;
   }
 };
@@ -98,6 +99,22 @@ UserSchema.statics = {
       throw error;
     }
     return user;
+  },
+
+  async addUserToChatById(userId, chat) {
+    // Helper to add user to chat, using userId
+    // Throws error if user does not exist
+    try {
+      const user = await this.findById(userId);
+      if (!(user)) {
+        throw new Error(`User with id ${userId} does not exist`);
+      }
+      return await user.joinChat(chat);
+    } catch (error) {
+      // Log and re-throw error
+      console.log(error);
+      throw error;
+    }
   }
 };
 

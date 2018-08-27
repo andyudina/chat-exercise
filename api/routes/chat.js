@@ -10,7 +10,7 @@ const chatRouter = express.Router();
 chatRouter.route('/')
   .get(apiRequiresAuthentication, ChatController.searchByName);
 
-chatRouter.route('/')
+chatRouter.route('/group/')
   .post(apiRequiresAuthentication, ChatController.createGroupChat);
 
 chatRouter.route('/:id/')
