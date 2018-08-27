@@ -115,6 +115,17 @@ UserSchema.statics = {
       console.log(error);
       throw error;
     }
+  },
+
+  async joinChatForMultipleUsers(users, chat) {
+    // Helper to add all users to chat one by one
+    return await users.reduce(
+      async (chatPromise, user) => {
+        const chat = await chatPromise;
+        return await user.joinChat(chat);
+      },
+      Promise.resolve(chat)
+    );
   }
 };
 

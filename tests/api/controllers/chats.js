@@ -339,3 +339,140 @@ describe('Join group chat', () => {
     utils.cleanAndCloseDbAfterTest(done);
   });
 });
+
+
+describe('Create new private chat', () => {
+  before((done) => {
+    utils.setUpDbBeforeTest(done);
+  });
+
+  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
+  
+  it('200 OK returned if chat created successfully', async () => {
+    this.req.body = {
+      user: this.user.id
+    };
+    const statusStub = sinon.stub().returns(this.res);
+    sinon.replace(this.res, 'status', statusStub);
+    await ChatController.createPrivateChat(this.req, this.res);
+    expect(statusStub.withArgs(200).calledOnce).to.be.true;
+  });
+
+  it('400 Bad request returned if no user provided', async () => {
+    const statusStub = sinon.stub().returns(this.res);
+    sinon.replace(this.res, 'status', statusStub);
+    await ChatController.createPrivateChat(this.req, this.res);
+    expect(statusStub.withArgs(400).calledOnce).to.be.true;
+  });
+
+  it('400 Bad request returned if user does not exist', async () => {
+    this.req.body = {
+      user: mongoose.Types.ObjectId().toString()
+    };
+    const statusStub = sinon.stub().returns(this.res);
+    sinon.replace(this.res, 'status', statusStub);
+    await ChatController.createPrivateChat(this.req, this.res);
+    expect(statusStub.withArgs(400).calledOnce).to.be.true;
+  });
+
+  it('Chat created successfully', async () => {
+    const newUser = User({
+      email: 'new-test',
+      googleID: 'new-test'
+    });
+    await newUser.save();
+
+    this.req.body = {
+      user: newUser.id
+    };
+    await ChatController.createPrivateChat(this.req, this.res);
+    const createdChat = await Chat.findOne(
+      {
+        $and: [
+          {isGroupChat: false},
+          {users: this.user.id},
+          {users: newUser.id}
+        ]
+      }
+    );
+    expect(createdChat).to.exist;
+  });
+
+  it('Chat returned if created successfully', async () => {
+    this.req.body = {
+      user: this.user.id
+    };
+    const jsonSpy = sinon.spy();
+    sinon.replace(this.res, 'json', jsonSpy);
+    await ChatController.createPrivateChat(this.req, this.res);
+    expect(
+      jsonSpy.getCall(0).args[0].users[0].toString()
+    ).to.be.equal(this.user.id);
+  });
+
+  it('Existing chat returned if already created', async () => {
+    const chat = Chat({
+      isGroupChat: false,
+      users: [this.user.id]
+    });
+    await chat.save();
+
+    this.req.body = {
+      user: this.user.id
+    };
+
+    const jsonSpy = sinon.spy();
+    sinon.replace(this.res, 'json', jsonSpy);
+
+    await ChatController.createPrivateChat(this.req, this.res);
+    expect(jsonSpy.getCall(0).args[0].id).to.be.equal(chat.id);
+  });
+
+  it('Validation errors returned if user is not provided', async () => {
+    const jsonSpy = sinon.spy();
+    sinon.replace(this.res, 'json', jsonSpy);
+    await ChatController.createPrivateChat(this.req, this.res);
+    const errors = {
+      errors: {
+        user: 'This field is required'
+      }
+    };
+    expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
+  });
+
+  it('Validation errors returned if user does not exist', async () => {
+    this.req.body = {
+      user: mongoose.Types.ObjectId().toString()
+    };
+    const jsonSpy = sinon.spy();
+    sinon.replace(this.res, 'json', jsonSpy);
+    await ChatController.createPrivateChat(this.req, this.res);
+    const errors = {
+      errors: {
+        user: 'This user does not exist'
+      }
+    };
+    expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
+  });
+
+  it('Chat with same user created successfully', async () => {
+    this.req.body = {
+      user: this.user.id
+    };
+    await ChatController.createPrivateChat(this.req, this.res);
+    const createdChat = await Chat.findOne(
+      {isGroupChat: false, 'users': this.user.id}
+    );
+    expect(createdChat).to.exist;
+  });
+
+  afterEach(async () => {
+    sinon.restore();
+    await User.remove({}).exec();
+    await Chat.remove({}).exec();
+  });
+
+  after((done) => {
+    utils.cleanAndCloseDbAfterTest(done);
+  });
+});

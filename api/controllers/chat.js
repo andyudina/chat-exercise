@@ -43,7 +43,7 @@ module.exports.searchByName = async (req, res) => {
       .sort({ score: { $meta: 'textScore' } })
       .select({_id: 1, name: 1})
       .exec();
-    // Manually remove score fron response
+    // Manually remove score from response
     chats = utils.formatListResponse(chats, ['name']);
   } catch (error) {
     // Unexpected error occured
@@ -82,7 +82,6 @@ module.exports.createGroupChat = async (req, res) => {
   try {
     chat = await Chat
       .create({name: name, isGroupChat: true});
-    // Manually remove score fron response
   } catch (error) {
     console.log(error);
     if (!(modelErrors.isDuplicateKeyError(error))) {
@@ -98,6 +97,91 @@ module.exports.createGroupChat = async (req, res) => {
     return;
   }
   const updatedChat = await User.addUserToChatById(req.user._id, chat);
+  res.status(200).json(updatedChat);
+};
+
+module.exports.createPrivateChat = async (req, res) => {
+  // Create private chat between current user
+  // and user in params. Using this api, one can also create
+  // chat with himself
+  // Expects requests in format:
+  // {
+  //   user: String
+  // }
+  // Success:
+  // Returns 200 OK
+  // {
+  //    _id: String,
+  // }
+  // Error:
+  // Returns 400 Bad request
+  // {
+  //   errors: {
+  //     [field]: [errorMessage]
+  //   }
+  // }
+  const user = req.body.user;
+  if (!(user)) {
+    res.status(400).json({errors: {user: 'This field is required'}});
+    return;
+  }
+  // Remove duplicates - we don't want to query db twice
+  // to create chat with same user
+  let userIdsInChat = [...new Set([user, req.user._id.toString()])];
+  // Convert to ObjectID
+  userIdsInChat = userIdsInChat.map(
+    (id) => mongoose.mongo.ObjectId(id)
+  );
+  // Check if chat between this users already exist
+  let chat;
+  try {
+    const conditions = {
+      $and: [
+        { isGroupChat: false },
+        ...userIdsInChat.map(
+          (userId) => ({'users': userId})
+        )
+      ]
+    };
+    chat = await Chat
+      .findOne(conditions)
+      .exec();
+  } catch (error) {
+    // Log and re-throw error
+    console.log(error);
+    throw error;
+  }
+  // Return already created chat if found
+  if (chat) {
+    res.status(200).json(chat);
+    return 
+  }
+  // Retrieve users with given ids
+  // Return error if user does not exist
+  const usersInChat = await User.find(
+    {
+      _id: {
+        $in: userIdsInChat
+      }
+    }
+  ).exec();
+  // Check if all users were found
+  if (usersInChat.length < userIdsInChat.length) {
+    // Return error if not all users were found
+    res.status(400).json({errors: {user: 'This user does not exist'}});
+    return;
+  }
+  // Create new chat
+  try {
+    chat = await Chat
+      .create({isGroupChat: false});
+  } catch (error) {
+    // Log and re-throw error
+    console.log(error);
+    throw error;
+  }
+  // Join new chat
+  const updatedChat = await User.joinChatForMultipleUsers(usersInChat, chat);
   res.status(200).json(updatedChat);
 };
 

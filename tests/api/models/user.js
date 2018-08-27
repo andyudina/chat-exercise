@@ -9,7 +9,11 @@ const Chat = require('../../../api/models/chat'),
   User = require('../../../api/models/user'),
   utils = require('../../_utils');
 
-// Static apis
+/*
+
+ Static APIs
+
+*/
 
 describe('findOneOrCreate static api for user model', () => {
   before((done) => {
@@ -131,7 +135,54 @@ describe('addUserToChatById - static api for User model', () => {
   });
 });
 
-// Model apis
+describe('joinChatForMultipleUsers - static api for User model', () => {
+  before((done) => {
+    utils.setUpDbBeforeTest(done);
+  });
+
+  beforeEach(utils.createChatAndUser.bind(this));
+
+  it('joinChat api called for each user', async () => {
+    const newUser = User({
+      email: 'new-test',
+      googleID: 'new-test'
+    });
+    await newUser.save();
+
+    const joinChatStub = sinon.stub().returns(this.chat);
+    sinon.replace(User.prototype, 'joinChat', joinChatStub);
+
+    await User.joinChatForMultipleUsers(
+      [this.user, newUser],
+      this.chat
+    );
+    expect(joinChatStub.calledTwice).to.be.true;
+  });
+
+  it('Updated chat returned', async () => {
+    const updatedChat = await User.joinChatForMultipleUsers(
+      [this.user],
+      this.chat
+    );
+    expect(updatedChat.id).to.be.equal(this.chat.id);
+  });
+
+  afterEach(async () => {
+    sinon.restore();
+    await Chat.remove({}).exec();
+    await User.remove({}).exec();
+  });
+
+  after((done) => {
+    utils.cleanAndCloseDbAfterTest(done);
+  });
+});
+
+/*
+
+ Model APIs
+
+*/
 
 describe('addChat api for user model', () => {
   before((done) => {

@@ -13,6 +13,9 @@ chatRouter.route('/')
 chatRouter.route('/group/')
   .post(apiRequiresAuthentication, ChatController.createGroupChat);
 
+chatRouter.route('/private/')
+  .post(apiRequiresAuthentication, ChatController.createPrivateChat);
+
 chatRouter.route('/:id/')
   .put(apiRequiresAuthentication, ChatController.joinGroupChat);
 

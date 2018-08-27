@@ -24,6 +24,8 @@ const ChatSchema = new Schema({
     type: Date,
     default : Date.now
   },
+  // TODO how to enforce on database level
+  // that private chat with same user is unique
   users: {
     type: [
       {
