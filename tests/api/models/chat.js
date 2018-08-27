@@ -9,6 +9,58 @@ const User = require('../../../api/models/user'),
   Chat = require('../../../api/models/chat'),
   utils = require('../../_utils');
 
+/*
+  Static API
+*/
+
+describe('findByIdWithUsers - static api for Chat model', () => {
+  before((done) => {
+    utils.setUpDbBeforeTest(done);
+  });
+
+  beforeEach(utils.createChatAndUser.bind(this));
+
+  it('Throw error if chat does not exist', async () => {
+    const ChatMock = sinon.mock(Chat);
+    ChatMock.expects('findByIdWithUsers').once().throws();
+    try {
+      await Chat.findByIdWithUsers(mongoose.Types.ObjectId().toString());
+    } catch (error) {
+      // Skip this section
+      // Error will be verified by mock
+    }
+    ChatMock.verify();
+  });
+
+  it('Populate user data', async () => {
+    await Chat.findByIdAndUpdate(
+      this.chat._id,
+      { users: [this.user._id] }
+    );
+
+    const chatWithUserData = await Chat.findByIdWithUsers(this.chat.id)
+    const expectedUsers = [{
+      _id: this.user.id,
+      nickname: this.user.nickname
+    }];
+    expect(chatWithUserData.users).to.be.deep.equal(expectedUsers);
+  });
+
+  afterEach(async () => {
+    sinon.restore();
+    await Chat.remove({}).exec();
+    await User.remove({}).exec();
+  });
+
+  after((done) => {
+    utils.cleanAndCloseDbAfterTest(done);
+  });
+
+});
+
+/*
+  Model API
+*/
 
 describe('addUser api for chat model', () => {
   before((done) => {

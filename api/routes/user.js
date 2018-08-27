@@ -32,6 +32,8 @@ userRouter.route('/self/chats')
   Messages routes
 
 */
+userRouter.route('/self/chats/:chatId')
+  .get(apiRequiresAuthentication, MessageController.getChatWithMessages);
 
 userRouter.route('/self/chats/:chatId/messages')
   .get(apiRequiresAuthentication, MessageController.listMessagesInChat);

@@ -64,6 +64,7 @@ ChatSchema.statics = {
     // Replace chat user ids with detailed information -
     // id and nickname
     // TODO user and chat models are too coupled - refactor
+    // TODO cover with tests
     const User = mongoose.model('User');
     // Get all users from all chats
     let chatParticipants = chats.map(chat => chat.users);
@@ -80,8 +81,19 @@ ChatSchema.statics = {
   async populateOneChatWithUserDetails(chat) {
     // Replace chat user ids with detailed information -
     // Wrapper for populateUserDetails, that simplifies usage with one chat
+    // TODO cover with tests
     const updatedChats = await this.populateUserDetails([chat]);
     return updatedChats[0];
+  },
+
+  async findByIdWithUsers(chatId) {
+    // Find chat by id
+    // Populate users details
+    const chat = await this.findById(chatId);
+    if (!(chat)) {
+      throw new Error(`User with id ${chatId} does not exist`);
+    }
+    return this.populateOneChatWithUserDetails(chat);
   }
 };
 
