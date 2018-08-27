@@ -1,4 +1,5 @@
 "use strict";
 
-require('./user');
 require('./chat');
+require('./message');
+require('./user');

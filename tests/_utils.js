@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const apiUtils = require('../api/utils'),
   config = require('../config'),
   Chat = require('../api/models/chat'),
+  Message = require('../api/models/message'),
   User = require('../api/models/user');
 
 const setUpDbBeforeTest = (done) => {
@@ -13,7 +14,7 @@ const setUpDbBeforeTest = (done) => {
   const connection = mongoose.connection;
   connection.on('error', console.log);
   connection.once('open', done);
-}
+};
 
 const cleanAndCloseDbAfterTest = (done) => {
   // Drop test database and disconect from mongoDB
@@ -25,10 +26,14 @@ const cleanAndCloseDbAfterTest = (done) => {
     // Clean up chat collection
     Chat.remove({}, (err) => {
       if (err) { throw err; }
-      mongoose.connection.close(done);
+        // Clean up Message collection
+        Message.remove({}, (err) => {
+          if (err) { throw err; }
+          mongoose.connection.close(done);
+        });
     });
   });
-}
+};
 
 const createTestUser = async ()  => {
   const user = User({
@@ -38,7 +43,7 @@ const createTestUser = async ()  => {
   });
   await user.save();
   return user;
-}
+};
 
 const createTestChat = async ()  => {
   const chat = Chat({
@@ -47,7 +52,7 @@ const createTestChat = async ()  => {
   });
   await chat.save();
   return chat;
-}
+};
 
 function setUpControllerTests() {
   // Set up environment for controller tests
@@ -67,7 +72,7 @@ function setUpControllerTests() {
   }
   res.status = () => {return res;};
   this.res = res;
-};
+}
 
 async function setUpControllerTestsWithUser() {
   // Set up environment for controller tests and create user
@@ -80,7 +85,7 @@ async function setUpControllerTestsWithUser() {
   // implementation
   setUpControllerTests.bind(this)();
   this.req.user = this.user;
-};
+}
 
 
 async function createChatAndUser() {
@@ -91,14 +96,30 @@ async function createChatAndUser() {
   this.chat = await createTestChat();
 }
 
+async function createUser() {
+  this.user = await createTestUser();
+}
+
 async function setUpControllerTestsWithUserAndChat() {
   // Set up environment for controller tests, create user and chat
   await setUpControllerTestsWithUser.bind(this)();
 
   // Create chat
   this.chat = await createTestChat();
-};
+}
 
+async function createMessages() {
+  // Generate two pages of messages
+  await createChatAndUser.bind(this)();
+  const messageDocs = [...Array(20).keys()].map(
+    (number) => ({
+      text: number.toString(),
+      chat: this.chat,
+      author: this.user
+    })
+  );
+  this.messages = await Message.insertMany(messageDocs);
+}
 
 
 module.exports = {
@@ -109,5 +130,7 @@ module.exports = {
   setUpControllerTestsWithUser,
   setUpControllerTestsWithUserAndChat,
 
-  createChatAndUser
+  createUser,
+  createChatAndUser,
+  createMessages
 }

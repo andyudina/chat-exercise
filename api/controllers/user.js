@@ -30,12 +30,18 @@ module.exports.setNickname = async (req, res) => {
   // }
   const nickname = req.body.nickname;
   if (!(nickname)) {
-    res.status(400).json({errors: {nickname: 'This field is required'}});
+    const errorMessage = {
+      errors: {
+        nickname: 'This field is required'
+      }
+    };
+    res
+      .status(400)
+      .json(errorMessage);
     return;
   }
   let user;
   try {
-
     user = await User.findByIdAndUpdate(req.user._id,
       { $set: { nickname: nickname }},
       {new: true}
@@ -46,7 +52,9 @@ module.exports.setNickname = async (req, res) => {
     console.log(error);
     throw error;
   }
-  res.status(200).json(user);
+  res
+    .status(200)
+    .json(user);
 };
 
 module.exports.getCurrentUser = async (req, res) => {
@@ -68,7 +76,9 @@ module.exports.getCurrentUser = async (req, res) => {
     console.log(error);
     throw error;
   }
-  res.status(200).json(user);
+  res
+    .status(200)
+    .json(user);
 };
 
 module.exports.searchByNickname = async (req, res) => {
@@ -94,7 +104,14 @@ module.exports.searchByNickname = async (req, res) => {
   // }
   const nickname = req.query.nickname;
   if (!(nickname)) {
-    res.status(400).json({errors: {nickname: 'This field is required'}});
+    const errorMessage = {
+      errors: {
+        nickname: 'This field is required'
+      }
+    };
+    res
+      .status(400)
+      .json(errorMessage);
     return;
   }
   let users;
@@ -114,7 +131,9 @@ module.exports.searchByNickname = async (req, res) => {
     console.log(error);
     throw error;
   }
-  res.status(200).json({users: users});  
+  res
+    .status(200)
+    .json({users: users});  
 };
 
 module.exports.getAllChatsForUser = async (req, res) => {
@@ -158,5 +177,7 @@ module.exports.getAllChatsForUser = async (req, res) => {
     console.log(error);
     throw error;
   }
-  res.status(200).json({chats: chats});  
+  res
+    .status(200)
+    .json({chats: chats});  
 };

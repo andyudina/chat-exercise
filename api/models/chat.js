@@ -68,18 +68,11 @@ ChatSchema.statics = {
     // Get all users from all chats
     let chatParticipants = chats.map(chat => chat.users);
     // Flatten user array
-    chatParticipants = [].concat.apply([], chatParticipants);
+    chatParticipants = utils.flattenArray(chatParticipants);
     // Filter duplicates
     chatParticipants = [...new Set(chatParticipants)];
     // Load chat participants details
-    let users = await User
-      .find({_id: { $in: chatParticipants }})
-      .select({_id: 1, nickname: 1})
-      .exec();
-    // Convert ids to string
-    users = utils.convertIdToString(users);
-    // Convert users array to map
-    const usersMap = new Map(users.map(user => [user._id, user]));
+    const usersMap = await User.getUsersMap(chatParticipants);
     // Enrich chat users with user details
     return utils.replaceDataInInnerArray(chats, 'users', usersMap);
   },

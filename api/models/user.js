@@ -2,6 +2,8 @@
 
 const mongoose = require('mongoose');
 
+const utils = require('../utils');
+
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
@@ -126,6 +128,30 @@ UserSchema.statics = {
       },
       Promise.resolve(chat)
     );
+  },
+
+  async hasAccessToChat(userId, chatId) {
+    // Verify that user is in chat users
+    const userCount = await this.count(
+      {
+        _id: mongoose.mongo.ObjectId(userId),
+        chats: mongoose.mongo.ObjectId(chatId),
+      }
+    );
+    return userCount > 0;
+  },
+
+  async getUsersMap(userIds) {
+    // Fetch short users with ids and return as Map(userId => user)
+    // Uses only _id and nickname fields
+    let users = await User
+      .find({_id: { $in: userIds }})
+      .select({_id: 1, nickname: 1})
+      .exec();
+    // Convert ids to string
+    users = utils.convertIdToString(users);
+    // Convert users array to map
+    return new Map(users.map(user => [user._id, user]));
   }
 };
 

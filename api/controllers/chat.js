@@ -51,7 +51,9 @@ module.exports.searchByName = async (req, res) => {
     console.log(error);
     throw error;
   }
-  res.status(200).json({chats: chats});  
+  res
+    .status(200)
+    .json({chats: chats});  
 };
 
 module.exports.createGroupChat = async (req, res) => {
@@ -75,7 +77,9 @@ module.exports.createGroupChat = async (req, res) => {
   // }
   const name = req.body.name;
   if (!(name)) {
-    res.status(400).json({errors: {name: 'This field is required'}});
+    res
+      .status(400)
+      .json({errors: {name: 'This field is required'}});
     return;
   }
   let chat;
@@ -93,11 +97,15 @@ module.exports.createGroupChat = async (req, res) => {
         name: 'Group chat with this name already exists'
       }
     };
-    res.status(400).json(errorResp);
+    res
+      .status(400)
+      .json(errorResp);
     return;
   }
   const updatedChat = await User.addUserToChatById(req.user._id, chat);
-  res.status(200).json(updatedChat);
+  res
+    .status(200)
+    .json(updatedChat);
 };
 
 module.exports.createPrivateChat = async (req, res) => {
@@ -122,7 +130,9 @@ module.exports.createPrivateChat = async (req, res) => {
   // }
   const user = req.body.user;
   if (!(user)) {
-    res.status(400).json({errors: {user: 'This field is required'}});
+    res
+      .status(400)
+      .json({errors: {user: 'This field is required'}});
     return;
   }
   // Remove duplicates - we don't want to query db twice
@@ -153,7 +163,9 @@ module.exports.createPrivateChat = async (req, res) => {
   }
   // Return already created chat if found
   if (chat) {
-    res.status(200).json(chat);
+    res
+      .status(200)
+      .json(chat);
     return 
   }
   // Retrieve users with given ids
@@ -168,7 +180,9 @@ module.exports.createPrivateChat = async (req, res) => {
   // Check if all users were found
   if (usersInChat.length < userIdsInChat.length) {
     // Return error if not all users were found
-    res.status(400).json({errors: {user: 'This user does not exist'}});
+    res
+      .status(400)
+      .json({errors: {user: 'This user does not exist'}});
     return;
   }
   // Create new chat
@@ -182,7 +196,9 @@ module.exports.createPrivateChat = async (req, res) => {
   }
   // Join new chat
   const updatedChat = await User.joinChatForMultipleUsers(usersInChat, chat);
-  res.status(200).json(updatedChat);
+  res
+    .status(200)
+    .json(updatedChat);
 };
 
 module.exports.joinGroupChat = async (req, res) => {
@@ -209,33 +225,41 @@ module.exports.joinGroupChat = async (req, res) => {
   const chatId = req.params.id;
   // Validate, that chat id was passed
   if (!(chatId)) {
-    res.status(400).json({errors: {chat: 'This field is required'}});
+    res
+      .status(400)
+      .json({errors: {chat: 'This field is required'}});
     return;
   }
   // Validate, that chat exists
   const chat = await Chat.findById(chatId);
   if (!(chat)) {
-    res.status(400).json(
-      {
-        errors: {
-          chat: 'Group chat with this id does not exists'
-        }
-      });
+    const errorMssage = {
+      errors: {
+        chat: 'Group chat with this id does not exists'
+      }
+    };
+    res
+      .status(400)
+      .json(errorMssage);
     return;
   }
   // Validate that it is group chat
   if (!(chat.isGroupChat)) {
-    res.status(400).json(
-      {
-        errors: {
-          chat: 'Unfortunately, you can not join private chat'
-        }
-      });
+    const errorMssage = {
+      errors: {
+        chat: 'Unfortunately, you can not join private chat'
+      }
+    };
+    res
+      .status(400)
+      .json(errorMssage);
     return;
   }
   // Join chat
   let updatedChat = await User.addUserToChatById(req.user._id, chat);
   // Enrich user details
   updatedChat = await Chat.populateOneChatWithUserDetails(updatedChat);
-  res.status(200).json(updatedChat);  
+  res
+    .status(200)
+    .json(updatedChat);
 };

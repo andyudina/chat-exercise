@@ -178,6 +178,72 @@ describe('joinChatForMultipleUsers - static api for User model', () => {
   });
 });
 
+describe('hasAccessToChat - static api for User model', () => {
+  before((done) => {
+    utils.setUpDbBeforeTest(done);
+  });
+
+  beforeEach(utils.createChatAndUser.bind(this));
+
+  it('Returns false if user doesn\'t have access', async () => {
+    const result = await User.hasAccessToChat(
+      this.user.id, this.chat.id);
+    expect(result).to.be.false;
+  });
+
+  it('Returns false if user doesn\'t exist', async () => {
+    const result = await User.hasAccessToChat(
+      mongoose.Types.ObjectId().toString(), this.chat.id);
+    expect(result).to.be.false;
+  });
+
+  it('Returns true if user has access', async () => {
+    await User.findByIdAndUpdate(
+      this.user._id,
+      { chats: [this.chat._id] }
+    );
+    const result = await User.hasAccessToChat(
+      this.user.id, this.chat.id);
+    expect(result).to.be.true;
+  });
+
+  afterEach(async () => {
+    sinon.restore();
+    await Chat.remove({}).exec();
+    await User.remove({}).exec();
+  });
+
+  after((done) => {
+    utils.cleanAndCloseDbAfterTest(done);
+  });
+});
+
+describe('getUsersMap - static api for User model', () => {
+  before((done) => {
+    utils.setUpDbBeforeTest(done);
+  });
+
+  beforeEach(utils.createUser.bind(this));
+
+  it('Returns valid map', async () => {
+    const userMap = await User.getUsersMap([this.user.id]);
+    const expectedUser = {
+      _id: this.user.id,
+      nickname: this.user.nickname
+    };
+    expect(userMap.get(this.user.id)).to.be.deep.equal(expectedUser);
+  });
+
+  afterEach(async () => {
+    sinon.restore();
+    await User.remove({}).exec();
+  });
+
+  after((done) => {
+    utils.cleanAndCloseDbAfterTest(done);
+  });
+});
+
 /*
 
  Model APIs
