@@ -3,6 +3,12 @@
 
 const MONGODB_DUPLICATE_KEY_ERROR = 11000;
 
-module.exports.isDuplicateKeyError = (errorCode) => {
-  return errorCode === MONGODB_DUPLICATE_KEY_ERROR;
-}
+const isMongoError = (error) => {
+  return error.name === 'MongoError';
+};
+
+module.exports.isDuplicateKeyError = (error) => {
+  return (
+    (isMongoError(error)) && 
+    (error.code === MONGODB_DUPLICATE_KEY_ERROR));
+};

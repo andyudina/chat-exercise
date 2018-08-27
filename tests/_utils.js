@@ -30,31 +30,34 @@ const cleanAndCloseDbAfterTest = (done) => {
   });
 }
 
-async function setUpControllerTestsWithUser() {
-  // Set up environment for controller tests and create user
-
-  // Create user
-  this.user = User({
+const createTestUser = async ()  => {
+  const user = User({
     email: 'test-email@google.com',
-    googleID: 'test-google-id'
+    googleID: 'test-google-id',
+    nickname: 'nickname'
   });
-  await this.user.save();
+  await user.save();
+  return user;
+}
 
-  // TODO: decouple from setUpControllerTests
-  // Now this function is dependant on setUpControllerTests
-  // implementation
-  setUpControllerTests.bind(this)();
-  this.req.user = this.user;
-};
+const createTestChat = async ()  => {
+  const chat = Chat({
+    isGroupChat: true,
+    name: 'name'
+  });
+  await chat.save();
+  return chat;
+}
 
-async function setUpControllerTests() {
+function setUpControllerTests() {
   // Set up environment for controller tests
   // Define stubs for request and response
 
   // Set up request
   const req = {
     body: {},
-    query: {}
+    query: {},
+    params: {}
   };
   this.req = req;
 
@@ -66,18 +69,37 @@ async function setUpControllerTests() {
   this.res = res;
 };
 
+async function setUpControllerTestsWithUser() {
+  // Set up environment for controller tests and create user
+
+  // Create user
+  this.user = await createTestUser();
+
+  // TODO: decouple from setUpControllerTests
+  // Now this function is dependant on setUpControllerTests
+  // implementation
+  setUpControllerTests.bind(this)();
+  this.req.user = this.user;
+};
+
 
 async function createChatAndUser() {
   // Helper to set up chat and user before test case is run
-  this.user = User({
-    email: 'test-email@google.com',
-    googleID: 'test-google-id'
-  });
-  await this.user.save();
-
-  this.chat = Chat({});
-  await this.chat.save();
+  // Create user
+  this.user = await createTestUser();
+  // Create chat
+  this.chat = await createTestChat();
 }
+
+async function setUpControllerTestsWithUserAndChat() {
+  // Set up environment for controller tests, create user and chat
+  await setUpControllerTestsWithUser.bind(this)();
+
+  // Create chat
+  this.chat = await createTestChat();
+};
+
+
 
 module.exports = {
   setUpDbBeforeTest,
@@ -85,5 +107,7 @@ module.exports = {
 
   setUpControllerTests,
   setUpControllerTestsWithUser,
+  setUpControllerTestsWithUserAndChat,
+
   createChatAndUser
 }

@@ -115,7 +115,7 @@ module.exports.searchByNickname = async (req, res) => {
     throw error;
   }
   res.status(200).json({users: users});  
-}
+};
 
 module.exports.getAllChatsForUser = async (req, res) => {
   // Return all chats for current user
@@ -151,34 +151,7 @@ module.exports.getAllChatsForUser = async (req, res) => {
       .exec();
     // Convert ids to string
     chats = utils.convertIdToString(chats);
-    // Get all chat particpants
-    let chatParticipants = chats.map(chat => chat.users);
-    // Flatten user array
-    chatParticipants = [].concat.apply([], chatParticipants);
-    // Filter duplicates
-    chatParticipants = [...new Set(chatParticipants)];
-    // Load chat participants details
-    let users = await User
-      .find({_id: { $in: chatParticipants }})
-      .select({_id: 1, nickname: 1})
-      .exec();
-    // Convert ids to string
-    users = utils.convertIdToString(users);
-    // Convert users to map
-    const usersMap = new Map(users.map(user => [user._id, user]));
-    // Enrich chat users with user details
-    chats = chats.map(
-      (chat) => {
-        return Object.assign(
-          chat,
-          {
-            users: chat.users.map(userId => {
-              return usersMap.get(userId.toString())
-            })
-          }
-        );
-      }
-    )
+    chats = await Chat.populateUserDetails(chats);
   } catch (error) {
     // Unexpected error occured
     // Better fail fast
@@ -186,4 +159,4 @@ module.exports.getAllChatsForUser = async (req, res) => {
     throw error;
   }
   res.status(200).json({chats: chats});  
-}
+};

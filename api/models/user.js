@@ -39,6 +39,7 @@ const UserSchema = new Schema({
 UserSchema.methods = {
   async addChat(chatId) {
     // Add chatId to chats if not exist
+    // Return updated user
     const chatIdAsObjectId = mongoose.mongo.ObjectId(chatId);
     const update = {
       $addToSet: { chats: chatIdAsObjectId }
@@ -46,14 +47,26 @@ UserSchema.methods = {
     try {
       // TODO what if user don't have chats array?
       // update will silently fail
-      await User.findByIdAndUpdate(this._id, update).exec();
+      return await User.findByIdAndUpdate(
+        this._id, update,
+        {new: true}
+      ).exec();
     } catch (error) {
       // Log error and re-throw
       console.log(error);
       throw error;
     }
+  },
+
+  async joinChat(chat) {
+    // Add chatId to chats of current user
+    // and userId to users of this chat
+    // TODO: transaction needed here
+    await this.addChat(chat._id);
+    const updatedChat = await chat.addUser(this._id);
+    return updatedChat;
   }
-}
+};
 
 UserSchema.statics = {
   async findOneOrCreate(googleID, email) {
@@ -86,7 +99,6 @@ UserSchema.statics = {
     }
     return user;
   }
-
 };
 
 const User = mongoose.model('User', UserSchema);

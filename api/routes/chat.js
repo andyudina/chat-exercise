@@ -13,4 +13,7 @@ chatRouter.route('/')
 chatRouter.route('/')
   .post(apiRequiresAuthentication, ChatController.createGroupChat);
 
+chatRouter.route('/:id/')
+  .put(apiRequiresAuthentication, ChatController.joinGroupChat);
+
 module.exports = chatRouter;

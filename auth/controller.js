@@ -2,7 +2,7 @@
 "use strict";
 
 const processSuccessfulAuth = (req, res) => {
-  return res.redirect('/');
+  return res.redirect('/api/users/self/');
 };
 
 module.exports = {

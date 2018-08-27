@@ -293,6 +293,7 @@ describe('Get all chats for current user', () => {
           users: [
             {
               _id: this.user.id,
+              nickname: this.user.nickname
             },
             {
               _id: anotherUser.id,
@@ -306,6 +307,7 @@ describe('Get all chats for current user', () => {
           users: [
             {
               _id: this.user.id,
+              nickname: this.user.nickname
             },
           ]
         },

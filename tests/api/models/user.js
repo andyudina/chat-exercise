@@ -8,6 +8,8 @@ const Chat = require('../../../api/models/chat'),
   User = require('../../../api/models/user'),
   utils = require('../../_utils');
 
+// Static apis
+
 describe('findOneOrCreate static api for user model', () => {
   before((done) => {
     utils.setUpDbBeforeTest(done);
@@ -70,6 +72,8 @@ describe('findOneOrCreate static api for user model', () => {
 
 });
 
+// Model apis
+
 describe('addChat api for user model', () => {
   before((done) => {
     utils.setUpDbBeforeTest(done);
@@ -91,6 +95,10 @@ describe('addChat api for user model', () => {
     expect(updatedUser.chats[0].toString()).to.be.equal(this.chat.id);
   });
 
+  it('Return updated user', async () => {
+    const updatedUser = await this.user.addChat(this.chat._id);
+    expect(updatedUser.chats[0].toString()).to.be.equal(this.chat.id);
+  });
 
   it('Throw error if db request failed', async () => {
     const findOneAndUpdateStub = sinon.stub().throws();
@@ -110,6 +118,39 @@ describe('addChat api for user model', () => {
     sinon.restore();
     await User.remove({}).exec();
     await Chat.remove({}).exec();
+  });
+
+  after((done) => {
+    utils.cleanAndCloseDbAfterTest(done);
+  });
+
+});
+
+describe('Join chat - static api for user model', () => {
+  before((done) => {
+    utils.setUpDbBeforeTest(done);
+  });
+
+  beforeEach(utils.createChatAndUser.bind(this));
+
+  it('Add user to channel', async () => {
+    const addUserStub = sinon.stub();
+    sinon.replace(Chat.prototype, 'addUser', addUserStub);
+    await this.user.joinChat(this.chat);
+    expect(addUserStub.withArgs(this.user._id).calledOnce).to.be.true;
+  });
+
+  it('Add channel to user', async () => {
+    const addChatStub = sinon.stub();
+    sinon.replace(User.prototype, 'addChat', addChatStub);
+    await this.user.joinChat(this.chat);
+    expect(addChatStub.withArgs(this.chat._id).calledOnce).to.be.true;
+  });
+
+  afterEach(async () => {
+    sinon.restore();
+    await Chat.remove({}).exec();
+    await User.remove({}).exec();
   });
 
   after((done) => {

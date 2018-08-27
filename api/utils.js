@@ -27,7 +27,7 @@ module.exports.formatListResponse = (list, fields) => {
       {_id: item._id.toString()},
     )
   );
-}
+};
 
 module.exports.convertIdToString = (list) => {
   // Converts all ids to string for all elements in array
@@ -36,4 +36,21 @@ module.exports.convertIdToString = (list) => {
     itemCopy._id = item._id.toString();
     return itemCopy;
   });
-}
+};
+
+const replaceDataInArray = (ids, itemsMap) => {
+  // Replace ids with elements from itemsMap
+  return ids.map(id => itemsMap.get(id.toString()));
+};
+
+module.exports.replaceDataInInnerArray = (documents, innerArrayField, itemsMap) => {
+  // Replace ids with elements from itemsMap in inner array of each document
+  return documents.map(
+    (doc) => {
+      let docCopy = {...doc};
+      docCopy[innerArrayField] = replaceDataInArray(
+        doc[innerArrayField], itemsMap);
+     return docCopy;
+    }
+  );
+};
