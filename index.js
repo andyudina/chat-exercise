@@ -13,7 +13,8 @@ require('./api/models');
 const authConfig = require('./config/passport/google').configure,
   config = require('./config'),
   router = require('./router'),
-  serverConfig =  require('./config/express/server');
+  serverConfig =  require('./config/express/server'),
+  socket = require('./socket');
 
 // Configure authorisation with passport
 authConfig(passport);
@@ -37,8 +38,11 @@ const connect = () => {
 connect();
 
 // Start express app on successful connection
-const listen = () => {
-  app.listen(config.port, config.host);
+const setUpServer = () => {
+  // Start server
+  const server = app.listen(config.port, config.host);
+  // Configure socket.io
+  socket(server);
   console.log(`Express app started on ${config.host}:${config.port}`);
 }
-mongoose.connection.once('open', listen);
+mongoose.connection.once('open', setUpServer);

@@ -115,3 +115,70 @@ module.exports.getChatWithMessages = async (req, res) => {
       chat: chat
     });
 };
+
+module.exports.sendMessage = async (req, res) => {
+  // Send message to chat
+  // Expects request:
+  // {
+  //   message: String
+  // }
+  // Success:
+  // Returns 200 OK
+  // {
+  //   message: {
+  //     _id: String,
+  //     text: String,
+  //     createdAt: Date,
+  //     author: String,
+  //     chat: String
+  //   }
+  // }
+  // Error:
+  // Returns 403 Forbidden
+  // if user don't have access to the chat
+  // Returns 400 Bad request
+  // if user don't provided message in request
+  // {
+  //   errors: {
+  //     [field]: [errorMessage]
+  //   }
+  // }
+  // Validate that user has access to chat
+  if (!(await User.hasAccessToChat(req.user._id, req.params.chatId))) {
+    const errorMessage = {
+      errors: {
+        chat: 'Unfortunately you can not access this chat'
+      }
+    };
+    res
+      .status(403)
+      .json(errorMessage);
+    return;
+  }
+  const messageText = req.body.message;
+  // Validate if message is provided
+  if (!(messageText)) {
+    const errorMessage = {
+      errors: {
+        message: 'This field is required'
+      }
+    };
+    res.
+      status(400)
+      .json(errorMessage);
+    return;
+  }
+  let message = Message({
+    text: messageText,
+    author: req.user._id,
+    chat: req.params.chatId
+  });
+  await message.save();
+  // Populate author and convert to json
+  message = await Message
+     .findById(message.id)
+     .populate({ path: 'author', select: 'nickname _id' });
+  res
+    .status(200)
+    .json({message: message});
+};

@@ -38,4 +38,7 @@ userRouter.route('/self/chats/:chatId')
 userRouter.route('/self/chats/:chatId/messages')
   .get(apiRequiresAuthentication, MessageController.listMessagesInChat);
 
+userRouter.route('/self/chats/:chatId/messages')
+  .post(apiRequiresAuthentication, MessageController.sendMessage);
+
 module.exports = userRouter;
