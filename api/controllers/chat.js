@@ -258,7 +258,7 @@ module.exports.joinGroupChat = async (req, res) => {
   // Join chat
   let updatedChat = await User.addUserToChatById(req.user._id, chat);
   // Enrich user details
-  updatedChat = await Chat.populateOneChatWithUserDetails(updatedChat);
+  updatedChat = await Chat.findByIdWithUsers(chat._id);
   res
     .status(200)
     .json(updatedChat);

@@ -164,13 +164,11 @@ module.exports.getAllChatsForUser = async (req, res) => {
     const user = await User.findById(req.user.id);
     // Load chat details
     chats = await Chat
-      .find({_id: { $in: user.chats }})
+      .find({ _id: { $in: user.chats } })
       .sort({ lastMessageAt: -1})
-      .select({_id: 1, name: 1, isGroupChat: 1, lastMessageAt: 1, users: 1})
+      .select({ _id: 1, name: 1, isGroupChat: 1, lastMessageAt: 1, users: 1 })
+      .populate({ path: 'users', select: 'nickname _id' })
       .exec();
-    // Convert ids to string
-    chats = utils.convertIdToString(chats);
-    chats = await Chat.populateUserDetails(chats);
   } catch (error) {
     // Unexpected error occured
     // Better fail fast

@@ -7,7 +7,8 @@ const expect = require('chai').expect,
 // Import models to register them with mongoose
 const User = require('../../../api/models/user'),
   Chat = require('../../../api/models/chat'),
-  testUtils = require('../../_utils');
+  testUtils = require('../../_utils'),
+  utils = require('../../../utils');
 
 /*
   Static API
@@ -43,7 +44,8 @@ describe('findByIdWithUsers - static api for Chat model', () => {
       _id: this.user.id,
       nickname: this.user.nickname
     }];
-    expect(chatWithUserData.users).to.be.deep.equal(expectedUsers);
+    expect(utils.toJSON(chatWithUserData.users))
+      .to.be.deep.equal(expectedUsers);
   });
 
   afterEach(async () => {
