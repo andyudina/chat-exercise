@@ -42,8 +42,9 @@ module.exports.setNickname = async (req, res, next) => {
   }
   let user;
   try {
-    user = await User.findByIdAndUpdate(req.user._id,
-      { $set: { nickname: nickname }},
+    user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: { nickname: nickname } },
       { new: true }
     ).exec();
   } catch (error) {
@@ -93,23 +94,17 @@ module.exports.searchByNickname = async (req, res, next) => {
   //  ]
   // ]
   // Error:
-  // Returns 400 Bad request
+  // Returns 400 Bad request if message is't provided
   // {
-  //   errors: {
-  //     [field]: [errorMessage]
-  //   }
+  //   errors: [
+  //     {
+  //       location: String,
+  //       param: String.
+  //       msg: String
+  //     }
+  //   ]
   // }
   const nickname = req.query.nickname;
-  if (!(nickname)) {
-    const errorMessage = {
-      errors: {
-        nickname: 'This field is required'
-      }
-    };
-    return res
-      .status(HttpStatus.BAD_REQUEST)
-      .json(errorMessage);
-  }
   let users;
   try {
     users = await User
@@ -119,7 +114,7 @@ module.exports.searchByNickname = async (req, res, next) => {
       .sort({ score: { $meta: 'textScore' } })
       .select({_id: 1, nickname: 1})
       .exec();
-    // Manually remove score fron response
+    // Manually remove score from response
     users = utils.formatListResponse(users, ['nickname']);
   } catch (error) {
     // Pass to default error handler
@@ -127,7 +122,7 @@ module.exports.searchByNickname = async (req, res, next) => {
   }
   res
     .status(HttpStatus.OK)
-    .json({users: users});  
+    .json({ users });  
 };
 
 module.exports.getAllChatsForUser = async (req, res, next) => {
@@ -169,5 +164,5 @@ module.exports.getAllChatsForUser = async (req, res, next) => {
   }
   res
     .status(HttpStatus.OK)
-    .json({chats: chats});  
+    .json({ chats });  
 };

@@ -56,7 +56,7 @@ module.exports.listMessagesInChat = async (req, res, next) => {
   }
   res
     .status(HttpStatus.OK)
-    .json({messages: messages});
+    .json({ messages });
 };
 
 module.exports.listNewMessagesInChat = async (req, res, next) => {
@@ -114,7 +114,7 @@ module.exports.listNewMessagesInChat = async (req, res, next) => {
   }
   res
     .status(HttpStatus.OK)
-    .json({messages: messages});
+    .json({ messages });
 };
 
 
@@ -179,10 +179,7 @@ module.exports.getChatWithMessages = async (req, res, next) => {
   }
   res
     .status(HttpStatus.OK)
-    .json({
-      messages: messages,
-      chat: chat
-    });
+    .json({ messages, chat });
 };
 
 module.exports.sendMessage = async (req, res, next) => {
@@ -246,5 +243,5 @@ module.exports.sendMessage = async (req, res, next) => {
   }
   res
     .status(HttpStatus.OK)
-    .json({message: message});
+    .json({ message });
 };
