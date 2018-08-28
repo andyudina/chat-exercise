@@ -102,21 +102,14 @@ describe('Create new group chat', () => {
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
 
-  it('400 Bad request returned if no name provided', async () => {
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-    await ChatController.createGroupChat(this.req, this.res);
-    expect(statusStub.withArgs(400).calledOnce).to.be.true;
-  });
-
-  it('400 Bad request returned if chat with this name already exist', async () => {
+  it('422 unprocessable entity returned if chat with this name already exist', async () => {
     const name = 'test';
     this.req.body.name = name;
     await Chat.create({name: name});
     const statusStub = sinon.stub().returns(this.res);
     sinon.replace(this.res, 'status', statusStub);
     await ChatController.createGroupChat(this.req, this.res);
-    expect(statusStub.withArgs(400).calledOnce).to.be.true;
+    expect(statusStub.withArgs(422).calledOnce).to.be.true;
   });
 
   it('Chat created successfully', async () => {
@@ -144,18 +137,6 @@ describe('Create new group chat', () => {
 
     await ChatController.createGroupChat(this.req, this.res);
     expect(addUserToChatByIdSpy.calledOnce).to.be.true;
-  });
-
-  it('Validation errors returned if name is not provided', async () => {
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
-    await ChatController.createGroupChat(this.req, this.res);
-    const errors = {
-      errors: {
-        name: 'This field is required'
-      }
-    };
-    expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
   });
 
   it('Validation errors returned if chat with this name already exists', async () => {
@@ -203,14 +184,14 @@ describe('Join group chat', () => {
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
 
-  it('400 Bad request returned if chat with this id does not exist', async () => {
+  it('422 unprocessable entity returned if chat with this id does not exist', async () => {
     this.req.params = {
       id: mongoose.Types.ObjectId().toString()
     };
     const statusStub = sinon.stub().returns(this.res);
     sinon.replace(this.res, 'status', statusStub);
     await ChatController.joinGroupChat(this.req, this.res);
-    expect(statusStub.withArgs(400).calledOnce).to.be.true;
+    expect(statusStub.withArgs(422).calledOnce).to.be.true;
   });
 
   it('Chat joined successfully', async () => {
@@ -311,21 +292,14 @@ describe('Create new private chat', () => {
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
 
-  it('400 Bad request returned if no user provided', async () => {
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-    await ChatController.createPrivateChat(this.req, this.res);
-    expect(statusStub.withArgs(400).calledOnce).to.be.true;
-  });
-
-  it('400 Bad request returned if user does not exist', async () => {
+  it('422 unprocessable entity returned if user does not exist', async () => {
     this.req.body = {
       user: mongoose.Types.ObjectId().toString()
     };
     const statusStub = sinon.stub().returns(this.res);
     sinon.replace(this.res, 'status', statusStub);
     await ChatController.createPrivateChat(this.req, this.res);
-    expect(statusStub.withArgs(400).calledOnce).to.be.true;
+    expect(statusStub.withArgs(422).calledOnce).to.be.true;
   });
 
   it('Chat created successfully', async () => {
@@ -379,18 +353,6 @@ describe('Create new private chat', () => {
 
     await ChatController.createPrivateChat(this.req, this.res);
     expect(jsonSpy.getCall(0).args[0].id).to.be.equal(chat.id);
-  });
-
-  it('Validation errors returned if user is not provided', async () => {
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
-    await ChatController.createPrivateChat(this.req, this.res);
-    const errors = {
-      errors: {
-        user: 'This field is required'
-      }
-    };
-    expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
   });
 
   it('Validation errors returned if user does not exist', async () => {

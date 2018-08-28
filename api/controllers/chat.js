@@ -75,23 +75,17 @@ module.exports.createGroupChat = async (req, res, next) => {
   //    name: String
   // }
   // Error:
-  // Returns 400 Bad request
+  // Returns 400 Bad request if name is't provided
   // {
-  //   errors: {
-  //     [field]: [errorMessage]
-  //   }
+  //   errors: [
+  //     {
+  //       location: String,
+  //       param: String.
+  //       msg: String
+  //     }
+  //   ]
   // }
   const name = req.body.name;
-  if (!(name)) {
-    const errorMessage = {
-      errors: {
-        name: 'This field is required'
-      }
-    };
-    return res
-      .status(HttpStatus.BAD_REQUEST)
-      .json(errorMessage);
-  }
   let chat;
   try {
     chat = await Chat
@@ -108,7 +102,7 @@ module.exports.createGroupChat = async (req, res, next) => {
       }
     };
     return res
-      .status(HttpStatus.BAD_REQUEST)
+      .status(HttpStatus.UNPROCESSABLE_ENTITY)
       .json(errorResp);
   }
   const updatedChat = await User.addUserToChatById(req.user._id, chat);
@@ -131,23 +125,17 @@ module.exports.createPrivateChat = async (req, res, next) => {
   //    _id: String,
   // }
   // Error:
-  // Returns 400 Bad request
+  // Returns 400 Bad request if user is't provided
   // {
-  //   errors: {
-  //     [field]: [errorMessage]
-  //   }
+  //   errors: [
+  //     {
+  //       location: String,
+  //       param: String.
+  //       msg: String
+  //     }
+  //   ]
   // }
   const user = req.body.user;
-  if (!(user)) {
-    const errorMessage = {
-      errors: {
-        user: 'This field is required'
-      }
-    };
-    return res
-      .status(HttpStatus.BAD_REQUEST)
-      .json(errorMessage);
-  }
   // Remove duplicates - we don't want to query db twice
   // to create chat with same user
   let userIdsInChat = [...new Set([user, req.user._id.toString()])];
@@ -198,7 +186,7 @@ module.exports.createPrivateChat = async (req, res, next) => {
       }
     };
     return res
-      .status(HttpStatus.BAD_REQUEST)
+      .status(HttpStatus.UNPROCESSABLE_ENTITY)
       .json(errorMessage);
   }
   let updatedChat;
@@ -234,7 +222,8 @@ module.exports.joinGroupChat = async (req, res, next) => {
   //    ]
   // }
   // Error:
-  // Returns 400 Bad request
+  // Returns 422 Unprocessable Entity 
+  // if chat does not exist or chat is not grouped
   // {
   //   errors: {
   //     [field]: [errorMessage]
@@ -257,7 +246,7 @@ module.exports.joinGroupChat = async (req, res, next) => {
       }
     };
     return res
-      .status(HttpStatus.BAD_REQUEST)
+      .status(HttpStatus.UNPROCESSABLE_ENTITY)
       .json(errorMessage);
   }
   // Validate that it is group chat
@@ -268,7 +257,7 @@ module.exports.joinGroupChat = async (req, res, next) => {
       }
     };
     return res
-      .status(HttpStatus.BAD_REQUEST)
+      .status(HttpStatus.UNPROCESSABLE_ENTITY)
       .json(errorMessage);
   }
   let updatedChat;

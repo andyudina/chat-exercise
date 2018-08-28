@@ -81,12 +81,15 @@ module.exports.listNewMessagesInChat = async (req, res, next) => {
   // Error:
   // Returns 403 Forbidden
   // if user don't have access to the chat
-  // Returns 400 Bad request
-  // if date isn't provided
+  // Returns 400 Bad request if date is't provided
   // {
-  //   errors: {
-  //     [field]: [errorMessage]
-  //   }
+  //   errors: [
+  //     {
+  //       location: String,
+  //       param: String.
+  //       msg: String
+  //     }
+  //   ]
   // }
   // Check if user has access to this chat
   if (!(await User.hasAccessToChat(req.user._id, req.params.chatId))) {
@@ -97,17 +100,6 @@ module.exports.listNewMessagesInChat = async (req, res, next) => {
     };
     return res
       .status(HttpStatus.FORBIDDEN)
-      .json(errorMessage);
-  }
-  // Validate if message is provided
-  if (!(req.query.date)) {
-    const errorMessage = {
-      errors: {
-        date: 'This field is required'
-      }
-    };
-    return res.
-      status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
   }
   let messages;
@@ -216,12 +208,15 @@ module.exports.sendMessage = async (req, res, next) => {
   // Error:
   // Returns 403 Forbidden
   // if user don't have access to the chat
-  // Returns 400 Bad request
-  // if user don't provided message in request
+  // Returns 400 Bad request if message is't provided
   // {
-  //   errors: {
-  //     [field]: [errorMessage]
-  //   }
+  //   errors: [
+  //     {
+  //       location: String,
+  //       param: String.
+  //       msg: String
+  //     }
+  //   ]
   // }
   // Validate that user has access to chat
   if (!(await User.hasAccessToChat(req.user._id, req.params.chatId))) {
@@ -235,17 +230,6 @@ module.exports.sendMessage = async (req, res, next) => {
       .json(errorMessage);
   }
   const messageText = req.body.message;
-  // Validate if message is provided
-  if (!(messageText)) {
-    const errorMessage = {
-      errors: {
-        message: 'This field is required'
-      }
-    };
-    return res
-      .status(HttpStatus.BAD_REQUEST)
-      .json(errorMessage);
-  }
   let message;
   try {
     // Create message

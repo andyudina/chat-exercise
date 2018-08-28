@@ -1,10 +1,12 @@
 "use strict";
 
 const express = require('express');
+const { query, body } = require('express-validator/check');
 
 const apiRequiresAuthentication = require('../../middleware/authenticate').apiRequiresAuthentication,
   MessageController = require('../controllers/message'),
-  UserController = require('../controllers/user');
+  UserController = require('../controllers/user'),
+  validateRequest = require('../../middleware/validate').validateRequest;
 
 const userRouter = express.Router();
 
@@ -15,10 +17,22 @@ const userRouter = express.Router();
 */
 
 userRouter.route('/')
-  .put(apiRequiresAuthentication, UserController.setNickname);
+  .put(
+    apiRequiresAuthentication,
+    [
+      body('nickname', 'This field is required').exists(),
+    ],
+    validateRequest,
+    UserController.setNickname);
 
 userRouter.route('/')
-  .get(apiRequiresAuthentication, UserController.searchByNickname);
+  .get(
+    apiRequiresAuthentication,
+    [
+      query('nickname', 'This field is required').exists(),
+    ],
+    validateRequest,
+    UserController.searchByNickname);
 
 userRouter.route('/self')
   .get(apiRequiresAuthentication, UserController.getCurrentUser);
@@ -32,6 +46,7 @@ userRouter.route('/self/chats')
   Messages routes
 
 */
+
 userRouter.route('/self/chats/:chatId')
   .get(apiRequiresAuthentication, MessageController.getChatWithMessages);
 
@@ -39,11 +54,24 @@ userRouter.route('/self/chats/:chatId/messages')
   .get(apiRequiresAuthentication, MessageController.listMessagesInChat);
 
 userRouter.route('/self/chats/:chatId/messages')
-  .post(apiRequiresAuthentication, MessageController.sendMessage);
+  .post(
+    apiRequiresAuthentication,
+    // Specify validation
+    [
+      body('message', 'This field is required').exists(),
+    ],
+    validateRequest,
+    MessageController.sendMessage);
 
 // Returns new messages
 // Expects date in get parameters (after wich messages will be returned)
 userRouter.route('/self/chats/:chatId/messages/new')
-  .get(apiRequiresAuthentication, MessageController.listNewMessagesInChat);
+  .get(
+    apiRequiresAuthentication,
+    [
+      query('date', 'This field is required').exists(),
+    ],
+    validateRequest,
+    MessageController.listNewMessagesInChat);
 
 module.exports = userRouter;

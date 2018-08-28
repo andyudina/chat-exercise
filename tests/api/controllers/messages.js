@@ -415,32 +415,6 @@ describe('Send message to chat', () => {
     }).calledOnce).to.be.true;
   });
 
-  it('400 bad request returned if no text message provided', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-
-    await MessageController.sendMessage(this.req, this.res);
-    expect(statusStub.withArgs(400).calledOnce).to.be.true;
-  });
-
-  it('Error returned if no text message provided', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
-    const jsonStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'json', jsonStub);
-
-    await MessageController.sendMessage(this.req, this.res);
-    expect(jsonStub.withArgs({
-      errors: { 
-        message: 'This field is required'
-      } 
-    }).calledOnce).to.be.true;
-  });
-
   afterEach(async () => {
     await Chat.remove({}).exec();
     await Message.remove({}).exec();

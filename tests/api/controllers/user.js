@@ -26,13 +26,6 @@ describe('Set user nickname', () => {
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
 
-  it('400 Bad request returned if error occured on update', async () => {
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-    await UserController.setNickname(this.req, this.res);
-    expect(statusStub.withArgs(400).calledOnce).to.be.true;
-  });
-
   it('User updated successfully', async () => {
     const nickname = 'test';
     this.req.body.nickname = nickname;
@@ -49,18 +42,6 @@ describe('Set user nickname', () => {
     sinon.replace(this.res, 'json', jsonSpy);
     await UserController.setNickname(this.req, this.res);
     expect(jsonSpy.getCall(0).args[0].nickname).to.be.equal(nickname);
-  });
-
-  it('Validation errors returned if error occured on update', async () => {
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
-    await UserController.setNickname(this.req, this.res);
-    const errors = {
-      errors: {
-        nickname: 'This field is required'
-      }
-    };
-    expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
   });
 
   afterEach(async () => {
@@ -119,13 +100,6 @@ describe('Search by nickname', () => {
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
 
-  it('400 Bad request returned if no nickname provided', async () => {
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-    await UserController.searchByNickname(this.req, this.res);
-    expect(statusStub.withArgs(400).calledOnce).to.be.true;
-  });
-
   it('Users returned successfully', async () => {
     const nickname = 'test';
     const firstMatchUser = User({
@@ -163,18 +137,6 @@ describe('Search by nickname', () => {
       ]
     };
     expect(jsonSpy.withArgs(expectedResponse).calledOnce).to.be.true;
-  });
-
-  it('Validation errors returned if nickname is not provided', async () => {
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
-    await UserController.searchByNickname(this.req, this.res);
-    const errors = {
-      errors: {
-        nickname: 'This field is required'
-      }
-    };
-    expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
   });
 
   afterEach(async () => {
