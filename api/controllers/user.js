@@ -36,10 +36,9 @@ module.exports.setNickname = async (req, res, next) => {
         nickname: 'This field is required'
       }
     };
-    res
+    return res
       .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
-    return;
   }
   let user;
   try {
@@ -50,8 +49,7 @@ module.exports.setNickname = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)
@@ -75,8 +73,7 @@ module.exports.getCurrentUser = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)
@@ -111,10 +108,9 @@ module.exports.searchByNickname = async (req, res, next) => {
         nickname: 'This field is required'
       }
     };
-    res
+    return res
       .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
-    return;
   }
   let users;
   try {
@@ -130,8 +126,7 @@ module.exports.searchByNickname = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)
@@ -174,8 +169,7 @@ module.exports.getAllChatsForUser = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)

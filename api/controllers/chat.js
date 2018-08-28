@@ -37,10 +37,9 @@ module.exports.searchByName = async (req, res, next) => {
         name: 'This field is required'
       }
     };
-    res
+    return res
       .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
-    return;
   }
   let chats;
   try {
@@ -56,13 +55,12 @@ module.exports.searchByName = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)
-    .json({chats: chats});  
-};
+    .json({chats: chats});
+}
 
 module.exports.createGroupChat = async (req, res, next) => {
   // Create group chat with provided name
@@ -90,10 +88,9 @@ module.exports.createGroupChat = async (req, res, next) => {
         name: 'This field is required'
       }
     };
-    res
+    return res
       .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
-    return;
   }
   let chat;
   try {
@@ -103,18 +100,16 @@ module.exports.createGroupChat = async (req, res, next) => {
     if (!(modelErrors.isDuplicateKeyError(error))) {
       // Log error and pass to default error handler
       console.log(error);
-      next(error);
-      return;
+      return next(error);
     }
     const errorResp = {
       errors: {
         name: 'Group chat with this name already exists'
       }
     };
-    res
+    return res
       .status(HttpStatus.BAD_REQUEST)
       .json(errorResp);
-    return;
   }
   const updatedChat = await User.addUserToChatById(req.user._id, chat);
   res
@@ -149,10 +144,9 @@ module.exports.createPrivateChat = async (req, res, next) => {
         user: 'This field is required'
       }
     };
-    res
+    return res
       .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
-    return;
   }
   // Remove duplicates - we don't want to query db twice
   // to create chat with same user
@@ -178,15 +172,13 @@ module.exports.createPrivateChat = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   // Return already created chat if found
   if (chat) {
-    res
+    return res
       .status(HttpStatus.OK)
       .json(chat);
-    return 
   }
   // Retrieve users with given ids
   // Return error if user does not exist
@@ -205,10 +197,9 @@ module.exports.createPrivateChat = async (req, res, next) => {
         user: 'This user does not exist'
       }
     };
-    res
+    return res
       .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
-    return;
   }
   let updatedChat;
   try {
@@ -221,8 +212,7 @@ module.exports.createPrivateChat = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)
@@ -258,8 +248,7 @@ module.exports.joinGroupChat = async (req, res, next) => {
   } catch(error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   if (!(chat)) {
     const errorMessage = {
@@ -267,10 +256,9 @@ module.exports.joinGroupChat = async (req, res, next) => {
         chat: 'Group chat with this id does not exists'
       }
     };
-    res
+    return res
       .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
-    return;
   }
   // Validate that it is group chat
   if (!(chat.isGroupChat)) {
@@ -279,10 +267,9 @@ module.exports.joinGroupChat = async (req, res, next) => {
         chat: 'Unfortunately, you can not join private chat'
       }
     };
-    res
+    return res
       .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
-    return;
   }
   let updatedChat;
   try {
@@ -293,8 +280,7 @@ module.exports.joinGroupChat = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)

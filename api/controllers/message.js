@@ -40,10 +40,9 @@ module.exports.listMessagesInChat = async (req, res, next) => {
         chat: 'Unfortunately you can not access this chat'
       }
     };
-    res
+    return res
       .status(HttpStatus.FORBIDDEN)
       .json(errorMessage);
-    return;
   }
   let messages;
   try {
@@ -54,8 +53,7 @@ module.exports.listMessagesInChat = async (req, res, next) => {
   } catch(error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)
@@ -97,10 +95,9 @@ module.exports.listNewMessagesInChat = async (req, res, next) => {
         chat: 'Unfortunately you can not access this chat'
       }
     };
-    res
+    return res
       .status(HttpStatus.FORBIDDEN)
       .json(errorMessage);
-    return;
   }
   // Validate if message is provided
   if (!(req.query.date)) {
@@ -109,10 +106,9 @@ module.exports.listNewMessagesInChat = async (req, res, next) => {
         date: 'This field is required'
       }
     };
-    res.
+    return res.
       status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
-    return;
   }
   let messages;
   try {
@@ -124,8 +120,7 @@ module.exports.listNewMessagesInChat = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)
@@ -178,10 +173,9 @@ module.exports.getChatWithMessages = async (req, res, next) => {
         chat: 'Unfortunately you can not access this chat'
       }
     };
-    res
+    return res
       .status(HttpStatus.FORBIDDEN)
       .json(errorMessage);
-    return;
   }
   let messages, chat;
   try {
@@ -192,8 +186,7 @@ module.exports.getChatWithMessages = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)
@@ -237,10 +230,9 @@ module.exports.sendMessage = async (req, res, next) => {
         chat: 'Unfortunately you can not access this chat'
       }
     };
-    res
+    return res
       .status(HttpStatus.FORBIDDEN)
       .json(errorMessage);
-    return;
   }
   const messageText = req.body.message;
   // Validate if message is provided
@@ -250,10 +242,9 @@ module.exports.sendMessage = async (req, res, next) => {
         message: 'This field is required'
       }
     };
-    res
+    return res
       .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
-    return;
   }
   let message;
   try {
@@ -271,8 +262,7 @@ module.exports.sendMessage = async (req, res, next) => {
   } catch (error) {
     // Log error and pass to default error handler
     console.log(error);
-    next(error);
-    return;
+    return next(error);
   }
   res
     .status(HttpStatus.OK)
