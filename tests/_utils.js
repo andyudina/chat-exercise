@@ -2,8 +2,7 @@
 
 const mongoose = require('mongoose');
 
-const apiUtils = require('../api/utils'),
-  config = require('../config'),
+const config = require('../config'),
   Chat = require('../api/models/chat'),
   Message = require('../api/models/message'),
   User = require('../api/models/user');
@@ -115,7 +114,8 @@ async function createMessages() {
     (number) => ({
       text: number.toString(),
       chat: this.chat,
-      author: this.user
+      author: this.user,
+      createdAt: new Date(2018, 8, number)
     })
   );
   this.messages = await Message.insertMany(messageDocs);

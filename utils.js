@@ -1,13 +1,5 @@
 "use strict";
 
-module.exports.processErrors = (error) => {
-  // Translate model validation errors to customer visible errors
-  // TODO what if error occured not because of validation?
-  const errorsArr = Object.keys(error.errors)
-    .map(field => [field, error.errors[field].message]);
-  return Object.assign(...errorsArr.map( ([k, v]) => ({[k]: v}) ));
-};
-
 module.exports.formatListResponse = (list, fields) => {
   // Clean up all fields from response except provided fields and _id
   // TODO cover with tests
@@ -72,4 +64,8 @@ module.exports.replaceDataInDocumentArray = (documents, fieldToBeReplaced, items
       return docCopy;
     }
   );
+};
+
+module.exports.toJSON = (objects) => {
+  return JSON.parse(JSON.stringify(objects));
 };

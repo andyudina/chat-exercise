@@ -7,7 +7,7 @@ const expect = require('chai').expect,
 // Import models to register them with mongoose
 const User = require('../../../api/models/user'),
   Chat = require('../../../api/models/chat'),
-  utils = require('../../_utils');
+  testUtils = require('../../_utils');
 
 /*
   Static API
@@ -15,10 +15,10 @@ const User = require('../../../api/models/user'),
 
 describe('findByIdWithUsers - static api for Chat model', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.createChatAndUser.bind(this));
+  beforeEach(testUtils.createChatAndUser.bind(this));
 
   it('Throw error if chat does not exist', async () => {
     const ChatMock = sinon.mock(Chat);
@@ -53,7 +53,7 @@ describe('findByIdWithUsers - static api for Chat model', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 
 });
@@ -64,10 +64,10 @@ describe('findByIdWithUsers - static api for Chat model', () => {
 
 describe('addUser api for chat model', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.createChatAndUser.bind(this));
+  beforeEach(testUtils.createChatAndUser.bind(this));
 
   it('Add user if not exist', async () => {
     await this.chat.addUser(this.user._id);
@@ -109,7 +109,7 @@ describe('addUser api for chat model', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 
 });

@@ -8,14 +8,14 @@ const expect = require('chai').expect,
 const Chat = require('../../../api/models/chat'),
   User = require('../../../api/models/user'),
   UserController = require('../../../api/controllers/user'),
-  utils = require('../../_utils')
+  testUtils = require('../../_utils');
 
 describe('Set user nickname', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
+  beforeEach(testUtils.setUpControllerTestsWithUser.bind(this));
   
   it('200 OK returned if nickname updated successfully', async () => {
     this.req.body.nickname = 'test';
@@ -82,16 +82,16 @@ describe('Set user nickname', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });
 
 describe('Get current user', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
   
-  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
+  beforeEach(testUtils.setUpControllerTestsWithUser.bind(this));
 
   it('200 OK returned if current user retrieved successfully', async () => {
     const statusStub = sinon.stub().returns(this.res);
@@ -127,16 +127,16 @@ describe('Get current user', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });
 
 describe('Search by nickname', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
+  beforeEach(testUtils.setUpControllerTestsWithUser.bind(this));
   
   it('200 OK returned if request completed successfully', async () => {
     this.req.query.nickname = 'test';
@@ -224,16 +224,16 @@ describe('Search by nickname', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });
 
 describe('Get all chats for current user', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
+  beforeEach(testUtils.setUpControllerTestsWithUser.bind(this));
   
   it('200 OK returned if request completed successfully', async () => {
     const statusStub = sinon.stub().returns(this.res);
@@ -323,6 +323,6 @@ describe('Get all chats for current user', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });

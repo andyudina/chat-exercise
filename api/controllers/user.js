@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 
-const utils = require('../utils');
+const utils = require('../../utils');
 
 const User = mongoose.model('User');
 

@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 
 const modelErrors = require('../models/errors'),
-  utils = require('../utils');
+  utils = require('../../utils');
 
 const Chat = mongoose.model('Chat'),
   User = mongoose.model('User');

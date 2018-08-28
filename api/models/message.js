@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 
 const config = require('../../config'),
-  utils = require('../utils');
+  utils = require('../../utils');
 
 const Schema = mongoose.Schema;
 
@@ -30,33 +30,46 @@ const MessageSchema = new Schema({
 });
 
 MessageSchema.statics = {
-  async listMessagesWithAuthor(chatId, page) {
-    // List paginated chat messages
-    // Populate author details
-    const User = mongoose.model('User');
-    let messages = await this.listMessages(chatId, page);
-    // Convert messages _id to string
-    messages = utils.convertIdToString(messages);
-    // Convert authorId to string
-    messages = utils.convertIdToString(messages, 'author');
-    const authorIds = [...new Set(messages.map(message => message.author))];
-    const usersMap = await User.getUsersMap(authorIds);
-    return utils
-      .replaceDataInDocumentArray(messages, 'author', usersMap);
-  },
-
-  async listMessages(chatId, page) {
+  async listMessagesPaginated(chatId, page) {
     // List paginated chat messages
     page = page || 1;
-    return await this
-      .find(
-        { chat: mongoose.mongo.ObjectId(chatId) })
-      .sort({ createdAt: -1 })
-      .select({_id: 1, author: 1, createdAt: 1, text: 1})
+    const query = this
+      .listMessagesWithAuthor(chatId)
       .skip(config.messagePageSize * (page - 1))
-      .limit(config.messagePageSize)
+      .limit(config.messagePageSize);
+    return await query.exec();
+  },
+
+  async listNewMessages(chatId, lastDate) {
+    // List new chat messages
+    // created after or at lastDate
+    // TODO: can two writes occur at exact time?
+    // if yes, using $gt can lead to missed messages
+    return await this
+      .listMessagesWithAuthor(chatId, { createdAt: { $gte: lastDate }})
+      .limit(config.messagePageSize) // Send only first page of messages
       .exec();
-  }
+  },
+
+  listMessagesWithAuthor(chatId, ...conditions) {
+    // Helper. Creates promise that will return
+    // filtered messages with populated author
+    // after resolve
+    // TODO cover with tests
+    return this
+      .find(
+        { 
+          $and: [
+            { chat: mongoose.mongo.ObjectId(chatId) },
+            ...(conditions || [])
+          ]
+        }
+      )
+      .sort({ createdAt: -1 })
+      .populate({ path: 'author', select: 'nickname _id' })
+      .select({_id: 1, author: 1, createdAt: 1, text: 1});
+  },
+
 };
 
 const Message = mongoose.model('Message', MessageSchema);

@@ -7,14 +7,14 @@ const expect = require('chai').expect,
 const Chat = require('../../../api/models/chat'),
   ChatController = require('../../../api/controllers/chat'),
   User = require('../../../api/models/user'),
-  utils = require('../../_utils')
+  testUtils = require('../../_utils');
 
 describe('Search by name', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.setUpControllerTests.bind(this));
+  beforeEach(testUtils.setUpControllerTests.bind(this));
   
   it('200 OK returned if request completed successfully', async () => {
     this.req.query.name = 'test';
@@ -96,16 +96,16 @@ describe('Search by name', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });
 
 describe('Create new group chat', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
+  beforeEach(testUtils.setUpControllerTestsWithUser.bind(this));
   
   it('200 OK returned if chat created successfully', async () => {
     this.req.body.name = 'new test';
@@ -209,18 +209,18 @@ describe('Create new group chat', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });
 
 
 describe('Join group chat', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
   beforeEach(
-    utils.setUpControllerTestsWithUserAndChat.bind(this));
+    testUtils.setUpControllerTestsWithUserAndChat.bind(this));
   
   it('200 OK returned if user joined chat successfully', async () => {
     this.req.params = {
@@ -336,17 +336,17 @@ describe('Join group chat', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });
 
 
 describe('Create new private chat', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.setUpControllerTestsWithUser.bind(this));
+  beforeEach(testUtils.setUpControllerTestsWithUser.bind(this));
   
   it('200 OK returned if chat created successfully', async () => {
     this.req.body = {
@@ -473,6 +473,6 @@ describe('Create new private chat', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });

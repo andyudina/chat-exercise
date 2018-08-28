@@ -7,7 +7,7 @@ const expect = require('chai').expect,
 const Chat = require('../../../api/models/chat'),
   mongoose = require('mongoose'),
   User = require('../../../api/models/user'),
-  utils = require('../../_utils');
+  testUtils = require('../../_utils');
 
 /*
 
@@ -17,7 +17,7 @@ const Chat = require('../../../api/models/chat'),
 
 describe('findOneOrCreate static api for user model', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
   it('User.findOneOrCreate return user with specified googleID, if such user exists', async () => {
@@ -72,17 +72,17 @@ describe('findOneOrCreate static api for user model', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 
 });
 
 describe('addUserToChatById - static api for User model', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.createChatAndUser.bind(this));
+  beforeEach(testUtils.createChatAndUser.bind(this));
 
   it('joinChat api called', async () => {
     const joinChatSpy = sinon.spy();
@@ -131,16 +131,16 @@ describe('addUserToChatById - static api for User model', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });
 
 describe('joinChatForMultipleUsers - static api for User model', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.createChatAndUser.bind(this));
+  beforeEach(testUtils.createChatAndUser.bind(this));
 
   it('joinChat api called for each user', async () => {
     const newUser = User({
@@ -174,16 +174,16 @@ describe('joinChatForMultipleUsers - static api for User model', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });
 
 describe('hasAccessToChat - static api for User model', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.createChatAndUser.bind(this));
+  beforeEach(testUtils.createChatAndUser.bind(this));
 
   it('Returns false if user doesn\'t have access', async () => {
     const result = await User.hasAccessToChat(
@@ -214,16 +214,16 @@ describe('hasAccessToChat - static api for User model', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });
 
 describe('getUsersMap - static api for User model', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.createUser.bind(this));
+  beforeEach(testUtils.createUser.bind(this));
 
   it('Returns valid map', async () => {
     const userMap = await User.getUsersMap([this.user.id]);
@@ -240,7 +240,7 @@ describe('getUsersMap - static api for User model', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 });
 
@@ -252,10 +252,10 @@ describe('getUsersMap - static api for User model', () => {
 
 describe('addChat api for user model', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.createChatAndUser.bind(this));
+  beforeEach(testUtils.createChatAndUser.bind(this));
 
   it('Add chat if not exist', async () => {
     await this.user.addChat(this.chat._id);
@@ -297,17 +297,17 @@ describe('addChat api for user model', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 
 });
 
 describe('joinChat api for User model', () => {
   before((done) => {
-    utils.setUpDbBeforeTest(done);
+    testUtils.setUpDbBeforeTest(done);
   });
 
-  beforeEach(utils.createChatAndUser.bind(this));
+  beforeEach(testUtils.createChatAndUser.bind(this));
 
   it('Add user to chat', async () => {
     const addUserStub = sinon.stub();
@@ -330,7 +330,7 @@ describe('joinChat api for User model', () => {
   });
 
   after((done) => {
-    utils.cleanAndCloseDbAfterTest(done);
+    testUtils.cleanAndCloseDbAfterTest(done);
   });
 
 });

@@ -7,7 +7,7 @@ const Chat = mongoose.model('Chat'),
   User = mongoose.model('User');
 
 module.exports.listMessagesInChat = async (req, res) => {
-  // Return messages, filtered by creation date
+  // Return messages, sorted by creation date
   // Accepts page in query string
   // Success:
   // Returns 200 OK
@@ -44,7 +44,7 @@ module.exports.listMessagesInChat = async (req, res) => {
       .json(errorMessage);
     return;
   }
-  const messages = await Message.listMessagesWithAuthor(
+  const messages = await Message.listMessagesPaginated(
     req.params.chatId, 
     req.query.page
   );
@@ -52,6 +52,69 @@ module.exports.listMessagesInChat = async (req, res) => {
     .status(200)
     .json({messages: messages});
 };
+
+module.exports.listNewMessagesInChat = async (req, res) => {
+  // Return messages created at or after passed date
+  // Expects date in query string
+  // Success:
+  // Returns 200 OK
+  // {
+  //   messages: [
+  //     {
+  //       _id: String,
+  //       text: String,
+  //       date: Date,
+  //       author: {
+  //         _id: String,
+  //         nickname: String
+  //       }
+  //     }
+  //  ]
+  // ]
+  // Error:
+  // Returns 403 Forbidden
+  // if user don't have access to the chat
+  // Returns 400 Bad request
+  // if date isn't provided
+  // {
+  //   errors: {
+  //     [field]: [errorMessage]
+  //   }
+  // }
+  // Check if user has access to this chat
+  if (!(await User.hasAccessToChat(req.user._id, req.params.chatId))) {
+    const errorMessage = {
+      errors: {
+        chat: 'Unfortunately you can not access this chat'
+      }
+    };
+    res
+      .status(403)
+      .json(errorMessage);
+    return;
+  }
+  // Validate if message is provided
+  if (!(req.query.date)) {
+    const errorMessage = {
+      errors: {
+        date: 'This field is required'
+      }
+    };
+    res.
+      status(400)
+      .json(errorMessage);
+    return;
+  }
+  // Get new messages
+  const messages = await Message.listNewMessages(
+    req.params.chatId, 
+    req.query.date
+  );
+  res
+    .status(200)
+    .json({messages: messages});
+};
+
 
 module.exports.getChatWithMessages = async (req, res) => {
   // Return chat with first page of messages
@@ -103,10 +166,9 @@ module.exports.getChatWithMessages = async (req, res) => {
       .json(errorMessage);
     return;
   }
-  const messages = await Message.listMessagesWithAuthor(
+  const messages = await Message.listMessagesPaginated(
     req.params.chatId, 
   );
-
   const chat = await Chat.findByIdWithUsers(req.params.chatId);
   res
     .status(200)

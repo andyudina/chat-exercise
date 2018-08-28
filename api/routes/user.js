@@ -41,4 +41,9 @@ userRouter.route('/self/chats/:chatId/messages')
 userRouter.route('/self/chats/:chatId/messages')
   .post(apiRequiresAuthentication, MessageController.sendMessage);
 
+// Returns new messages
+// Expects date in get parameters (after wich messages will be returned)
+userRouter.route('/self/chats/:chatId/messages/new')
+  .get(apiRequiresAuthentication, MessageController.listNewMessagesInChat);
+
 module.exports = userRouter;
