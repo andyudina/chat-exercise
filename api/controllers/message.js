@@ -1,6 +1,7 @@
 "use strict";
 
-const mongoose = require('mongoose');
+const HttpStatus = require('http-status-codes'),
+  mongoose = require('mongoose');
 
 const Chat = mongoose.model('Chat'),
   Message = mongoose.model('Message'),
@@ -40,7 +41,7 @@ module.exports.listMessagesInChat = async (req, res) => {
       }
     };
     res
-      .status(403)
+      .status(HttpStatus.FORBIDDEN)
       .json(errorMessage);
     return;
   }
@@ -49,7 +50,7 @@ module.exports.listMessagesInChat = async (req, res) => {
     req.query.page
   );
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json({messages: messages});
 };
 
@@ -89,7 +90,7 @@ module.exports.listNewMessagesInChat = async (req, res) => {
       }
     };
     res
-      .status(403)
+      .status(HttpStatus.FORBIDDEN)
       .json(errorMessage);
     return;
   }
@@ -101,7 +102,7 @@ module.exports.listNewMessagesInChat = async (req, res) => {
       }
     };
     res.
-      status(400)
+      status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
     return;
   }
@@ -111,7 +112,7 @@ module.exports.listNewMessagesInChat = async (req, res) => {
     req.query.date
   );
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json({messages: messages});
 };
 
@@ -162,7 +163,7 @@ module.exports.getChatWithMessages = async (req, res) => {
       }
     };
     res
-      .status(403)
+      .status(HttpStatus.FORBIDDEN)
       .json(errorMessage);
     return;
   }
@@ -171,7 +172,7 @@ module.exports.getChatWithMessages = async (req, res) => {
   );
   const chat = await Chat.findByIdWithUsers(req.params.chatId);
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json({
       messages: messages,
       chat: chat
@@ -213,7 +214,7 @@ module.exports.sendMessage = async (req, res) => {
       }
     };
     res
-      .status(403)
+      .status(HttpStatus.FORBIDDEN)
       .json(errorMessage);
     return;
   }
@@ -225,8 +226,8 @@ module.exports.sendMessage = async (req, res) => {
         message: 'This field is required'
       }
     };
-    res.
-      status(400)
+    res
+      .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
     return;
   }
@@ -241,6 +242,6 @@ module.exports.sendMessage = async (req, res) => {
      .findById(message.id)
      .populate({ path: 'author', select: 'nickname _id' });
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json({message: message});
 };

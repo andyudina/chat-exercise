@@ -233,13 +233,6 @@ describe('Join group chat', () => {
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
 
-  it('400 Bad request returned if no chat id provided', async () => {
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-    await ChatController.joinGroupChat(this.req, this.res);
-    expect(statusStub.withArgs(400).calledOnce).to.be.true;
-  });
-
   it('400 Bad request returned if chat with this id does not exist', async () => {
     this.req.params = {
       id: mongoose.Types.ObjectId().toString()
@@ -286,18 +279,6 @@ describe('Join group chat', () => {
     expect(
       utils.toJSON(receivedResult)
     ).to.be.deep.equal(expectedUsersResult);
-  });
-
-  it('Validation errors returned if no chat id provided', async () => {
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
-    await ChatController.joinGroupChat(this.req, this.res);
-    const errors = {
-      errors: {
-        chat: 'This field is required'
-      }
-    };
-    expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
   });
 
   it('Validation errors returned if chat with this id does not exist', async () => {

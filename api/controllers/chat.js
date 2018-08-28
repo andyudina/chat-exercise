@@ -1,6 +1,7 @@
 "use strict";
 
-const mongoose = require('mongoose');
+const HttpStatus = require('http-status-codes'),
+  mongoose = require('mongoose');
 
 const modelErrors = require('../models/errors'),
   utils = require('../../utils');
@@ -31,7 +32,14 @@ module.exports.searchByName = async (req, res) => {
   // }
   const name = req.query.name;
   if (!(name)) {
-    res.status(400).json({errors: {name: 'This field is required'}});
+    const errorMessage = {
+      errors: {
+        name: 'This field is required'
+      }
+    };
+    res
+      .status(HttpStatus.BAD_REQUEST)
+      .json(errorMessage);
     return;
   }
   let chats;
@@ -52,7 +60,7 @@ module.exports.searchByName = async (req, res) => {
     throw error;
   }
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json({chats: chats});  
 };
 
@@ -77,15 +85,20 @@ module.exports.createGroupChat = async (req, res) => {
   // }
   const name = req.body.name;
   if (!(name)) {
+    const errorMessage = {
+      errors: {
+        name: 'This field is required'
+      }
+    };
     res
-      .status(400)
-      .json({errors: {name: 'This field is required'}});
+      .status(HttpStatus.BAD_REQUEST)
+      .json(errorMessage);
     return;
   }
   let chat;
   try {
     chat = await Chat
-      .create({name: name, isGroupChat: true});
+      .create({ name: name, isGroupChat: true });
   } catch (error) {
     console.log(error);
     if (!(modelErrors.isDuplicateKeyError(error))) {
@@ -98,13 +111,13 @@ module.exports.createGroupChat = async (req, res) => {
       }
     };
     res
-      .status(400)
+      .status(HttpStatus.BAD_REQUEST)
       .json(errorResp);
     return;
   }
   const updatedChat = await User.addUserToChatById(req.user._id, chat);
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json(updatedChat);
 };
 
@@ -130,9 +143,14 @@ module.exports.createPrivateChat = async (req, res) => {
   // }
   const user = req.body.user;
   if (!(user)) {
+    const errorMessage = {
+      errors: {
+        user: 'This field is required'
+      }
+    };
     res
-      .status(400)
-      .json({errors: {user: 'This field is required'}});
+      .status(HttpStatus.BAD_REQUEST)
+      .json(errorMessage);
     return;
   }
   // Remove duplicates - we don't want to query db twice
@@ -164,7 +182,7 @@ module.exports.createPrivateChat = async (req, res) => {
   // Return already created chat if found
   if (chat) {
     res
-      .status(200)
+      .status(HttpStatus.OK)
       .json(chat);
     return 
   }
@@ -180,9 +198,14 @@ module.exports.createPrivateChat = async (req, res) => {
   // Check if all users were found
   if (usersInChat.length < userIdsInChat.length) {
     // Return error if not all users were found
+    const errorMessage = {
+      errors: {
+        user: 'This user does not exist'
+      }
+    };
     res
-      .status(400)
-      .json({errors: {user: 'This user does not exist'}});
+      .status(HttpStatus.BAD_REQUEST)
+      .json(errorMessage);
     return;
   }
   // Create new chat
@@ -197,12 +220,12 @@ module.exports.createPrivateChat = async (req, res) => {
   // Join new chat
   const updatedChat = await User.joinChatForMultipleUsers(usersInChat, chat);
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json(updatedChat);
 };
 
 module.exports.joinGroupChat = async (req, res) => {
-  // Create group chat with provided name
+  // Join group chat
   // Success:
   // Returns 200 OK
   // {
@@ -223,36 +246,29 @@ module.exports.joinGroupChat = async (req, res) => {
   //   }
   // }
   const chatId = req.params.id;
-  // Validate, that chat id was passed
-  if (!(chatId)) {
-    res
-      .status(400)
-      .json({errors: {chat: 'This field is required'}});
-    return;
-  }
   // Validate, that chat exists
   const chat = await Chat.findById(chatId);
   if (!(chat)) {
-    const errorMssage = {
+    const errorMessage = {
       errors: {
         chat: 'Group chat with this id does not exists'
       }
     };
     res
-      .status(400)
-      .json(errorMssage);
+      .status(HttpStatus.BAD_REQUEST)
+      .json(errorMessage);
     return;
   }
   // Validate that it is group chat
   if (!(chat.isGroupChat)) {
-    const errorMssage = {
+    const errorMessage = {
       errors: {
         chat: 'Unfortunately, you can not join private chat'
       }
     };
     res
-      .status(400)
-      .json(errorMssage);
+      .status(HttpStatus.BAD_REQUEST)
+      .json(errorMessage);
     return;
   }
   // Join chat
@@ -260,7 +276,7 @@ module.exports.joinGroupChat = async (req, res) => {
   // Enrich user details
   updatedChat = await Chat.findByIdWithUsers(chat._id);
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json(updatedChat);
 };
 

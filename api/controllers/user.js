@@ -1,6 +1,7 @@
 "use strict";
 
-const mongoose = require('mongoose');
+const HttpStatus = require('http-status-codes'),
+  mongoose = require('mongoose');
 
 const utils = require('../../utils');
 
@@ -36,7 +37,7 @@ module.exports.setNickname = async (req, res) => {
       }
     };
     res
-      .status(400)
+      .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
     return;
   }
@@ -44,7 +45,7 @@ module.exports.setNickname = async (req, res) => {
   try {
     user = await User.findByIdAndUpdate(req.user._id,
       { $set: { nickname: nickname }},
-      {new: true}
+      { new: true }
     ).exec();
   } catch (error) {
     // Unexpected error occured
@@ -53,7 +54,7 @@ module.exports.setNickname = async (req, res) => {
     throw error;
   }
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json(user);
 };
 
@@ -77,7 +78,7 @@ module.exports.getCurrentUser = async (req, res) => {
     throw error;
   }
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json(user);
 };
 
@@ -110,7 +111,7 @@ module.exports.searchByNickname = async (req, res) => {
       }
     };
     res
-      .status(400)
+      .status(HttpStatus.BAD_REQUEST)
       .json(errorMessage);
     return;
   }
@@ -132,7 +133,7 @@ module.exports.searchByNickname = async (req, res) => {
     throw error;
   }
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json({users: users});  
 };
 
@@ -176,6 +177,6 @@ module.exports.getAllChatsForUser = async (req, res) => {
     throw error;
   }
   res
-    .status(200)
+    .status(HttpStatus.OK)
     .json({chats: chats});  
 };
