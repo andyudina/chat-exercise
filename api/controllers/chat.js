@@ -53,8 +53,7 @@ module.exports.searchByName = async (req, res, next) => {
     // Manually remove score from response
     chats = utils.formatListResponse(chats, ['name']);
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res
@@ -92,9 +91,8 @@ module.exports.createGroupChat = async (req, res, next) => {
       .create({ name: name, isGroupChat: true });
   } catch (error) {
     if (!(modelErrors.isDuplicateKeyError(error))) {
-      // Log error and pass to default error handler
-      console.log(error);
-      return next(error);
+    // Pass to default error handler
+    return next(error);
     }
     const errorResp = {
       errors: {
@@ -158,8 +156,7 @@ module.exports.createPrivateChat = async (req, res, next) => {
       .findOne(conditions)
       .exec();
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   // Return already created chat if found
@@ -198,8 +195,7 @@ module.exports.createPrivateChat = async (req, res, next) => {
     updatedChat = await User
       .joinChatForMultipleUsers(usersInChat, chat);
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res
@@ -235,8 +231,7 @@ module.exports.joinGroupChat = async (req, res, next) => {
   try {
     chat = await Chat.findById(chatId);
   } catch(error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   if (!(chat)) {
@@ -267,8 +262,7 @@ module.exports.joinGroupChat = async (req, res, next) => {
     // Enrich user details
     updatedChat = await Chat.findByIdWithUsers(chat._id);
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res

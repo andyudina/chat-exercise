@@ -47,8 +47,7 @@ module.exports.setNickname = async (req, res, next) => {
       { new: true }
     ).exec();
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res
@@ -71,8 +70,7 @@ module.exports.getCurrentUser = async (req, res, next) => {
   try {
     user = await User.findById(req.user._id).exec();
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res
@@ -124,8 +122,7 @@ module.exports.searchByNickname = async (req, res, next) => {
     // Manually remove score fron response
     users = utils.formatListResponse(users, ['nickname']);
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res
@@ -167,8 +164,7 @@ module.exports.getAllChatsForUser = async (req, res, next) => {
       .populate({ path: 'users', select: 'nickname _id' })
       .exec();
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res

@@ -51,8 +51,7 @@ module.exports.listMessagesInChat = async (req, res, next) => {
       req.query.page
     );
   } catch(error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res
@@ -110,8 +109,7 @@ module.exports.listNewMessagesInChat = async (req, res, next) => {
       req.query.date
     );
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res
@@ -176,8 +174,7 @@ module.exports.getChatWithMessages = async (req, res, next) => {
     );
     chat = await Chat.findByIdWithUsers(req.params.chatId);
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res
@@ -244,8 +241,7 @@ module.exports.sendMessage = async (req, res, next) => {
       .findById(message.id)
       .populate({ path: 'author', select: 'nickname _id' });
   } catch (error) {
-    // Log error and pass to default error handler
-    console.log(error);
+    // Pass to default error handler
     return next(error);
   }
   res

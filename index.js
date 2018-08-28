@@ -26,6 +26,14 @@ serverConfig(app, passport);
 // Configure routes to be served
 router(app);
 
+// Register simple error handler that returns 500
+// and logs error
+app.use((err, req, res, next) => {
+  console.log(err);
+  res.status(500);
+  res.end();
+});
+
 // Connect to mongoDB
 const connect = () => {
   mongoose.connect(config.db, { useNewUrlParser: true });
