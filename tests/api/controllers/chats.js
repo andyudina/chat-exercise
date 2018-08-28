@@ -77,20 +77,6 @@ describe('Search by name', () => {
     expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
   });
 
-  it('Throw error is search falied', async () => {
-    const findByIdAndUpdateStub = sinon.stub().throws();
-    sinon.replace(Chat, 'findByIdAndUpdate', findByIdAndUpdateStub);
-    const ChatControllerMock = sinon.mock(ChatController);
-    ChatControllerMock.expects('searchByName').once().throws();
-    try {
-      await ChatController.searchByName(this.req, this.res);
-    } catch (error) {
-      // Skip this section
-      // Error will be verified by mock
-    }
-    ChatControllerMock.verify();
-  });
-
   afterEach(async () => {
     sinon.restore();
     await Chat.remove({}).exec();
@@ -185,22 +171,6 @@ describe('Create new group chat', () => {
       }
     };
     expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
-  });
-
-  it('Throw error is unknown error occured', async () => {
-    const name = 'test';
-    this.req.body.name = name;
-    const createStub = sinon.stub().throws();
-    sinon.replace(Chat, 'create', createStub);
-    const ChatControllerMock = sinon.mock(ChatController);
-    ChatControllerMock.expects('createGroupChat').once().throws();
-    try {
-      await ChatController.createGroupChat(this.req, this.res);
-    } catch (error) {
-      // Skip this section
-      // Error will be verified by mock
-    }
-    ChatControllerMock.verify();
   });
 
   afterEach(async () => {

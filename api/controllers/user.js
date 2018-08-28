@@ -7,7 +7,7 @@ const utils = require('../../utils');
 
 const User = mongoose.model('User');
 
-module.exports.setNickname = async (req, res) => {
+module.exports.setNickname = async (req, res, next) => {
   // Set user nickname
   // Expects requests in format:
   // {
@@ -48,17 +48,17 @@ module.exports.setNickname = async (req, res) => {
       { new: true }
     ).exec();
   } catch (error) {
-    // Unexpected error occured
-    // Better fail fast
+    // Log error and pass to default error handler
     console.log(error);
-    throw error;
+    next(error);
+    return;
   }
   res
     .status(HttpStatus.OK)
     .json(user);
 };
 
-module.exports.getCurrentUser = async (req, res) => {
+module.exports.getCurrentUser = async (req, res, next) => {
   // Return current user
   // Success:
   // Returns 200 OK
@@ -73,16 +73,17 @@ module.exports.getCurrentUser = async (req, res) => {
   try {
     user = await User.findById(req.user._id).exec();
   } catch (error) {
-    // Unexpected error - log and fail
+    // Log error and pass to default error handler
     console.log(error);
-    throw error;
+    next(error);
+    return;
   }
   res
     .status(HttpStatus.OK)
     .json(user);
 };
 
-module.exports.searchByNickname = async (req, res) => {
+module.exports.searchByNickname = async (req, res, next) => {
   // Return users filtered by nickname
   // Returns also current user (if found) by design
   // Expects nickname in query paramaters
@@ -127,17 +128,17 @@ module.exports.searchByNickname = async (req, res) => {
     // Manually remove score fron response
     users = utils.formatListResponse(users, ['nickname']);
   } catch (error) {
-    // Unexpected error occured
-    // Better fail fast
+    // Log error and pass to default error handler
     console.log(error);
-    throw error;
+    next(error);
+    return;
   }
   res
     .status(HttpStatus.OK)
     .json({users: users});  
 };
 
-module.exports.getAllChatsForUser = async (req, res) => {
+module.exports.getAllChatsForUser = async (req, res, next) => {
   // Return all chats for current user
   // sorted by last activity date
   // Success:
@@ -171,10 +172,10 @@ module.exports.getAllChatsForUser = async (req, res) => {
       .populate({ path: 'users', select: 'nickname _id' })
       .exec();
   } catch (error) {
-    // Unexpected error occured
-    // Better fail fast
+    // Log error and pass to default error handler
     console.log(error);
-    throw error;
+    next(error);
+    return;
   }
   res
     .status(HttpStatus.OK)

@@ -63,20 +63,6 @@ describe('Set user nickname', () => {
     expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
   });
 
-  it('Throw error is update failed', async () => {
-    const findByIdAndUpdateStub = sinon.stub().throws();
-    sinon.replace(User, 'findByIdAndUpdate', findByIdAndUpdateStub);
-    const UserControllerMock = sinon.mock(UserController);
-    UserControllerMock.expects('setNickname').once().throws();
-    try {
-      await UserController.setNickname(this.req, this.res);
-    } catch (error) {
-      // Skip this section
-      // Error will be verified by mock
-    }
-    UserControllerMock.verify();
-  });
-
   afterEach(async () => {
     sinon.restore();
     await User.remove({}).exec();
@@ -106,20 +92,6 @@ describe('Get current user', () => {
     sinon.replace(this.res, 'json', jsonSpy);
     await UserController.getCurrentUser(this.req, this.res);
     expect(jsonSpy.getCall(0).args[0].id).to.be.equal(this.user.id);
-  });
-
-  it('Throw error is user retrieval failed', async () => {
-    const findByIdStub = sinon.stub().throws();
-    sinon.replace(User, 'findById', findByIdStub);
-    const UserControllerMock = sinon.mock(UserController);
-    UserControllerMock.expects('getCurrentUser').once().throws();
-    try {
-      await UserController.getCurrentUser(this.req, this.res);
-    } catch (error) {
-      // Skip this section
-      // Error will be verified by mock
-    }
-    UserControllerMock.verify();
   });
 
   afterEach(async () => {
@@ -203,20 +175,6 @@ describe('Search by nickname', () => {
       }
     };
     expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
-  });
-
-  it('Throw error is search falied', async () => {
-    const findByIdAndUpdateStub = sinon.stub().throws();
-    sinon.replace(User, 'findByIdAndUpdate', findByIdAndUpdateStub);
-    const UserControllerMock = sinon.mock(UserController);
-    UserControllerMock.expects('searchByNickname').once().throws();
-    try {
-      await UserController.searchByNickname(this.req, this.res);
-    } catch (error) {
-      // Skip this section
-      // Error will be verified by mock
-    }
-    UserControllerMock.verify();
   });
 
   afterEach(async () => {

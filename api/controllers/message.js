@@ -7,7 +7,7 @@ const Chat = mongoose.model('Chat'),
   Message = mongoose.model('Message'),
   User = mongoose.model('User');
 
-module.exports.listMessagesInChat = async (req, res) => {
+module.exports.listMessagesInChat = async (req, res, next) => {
   // Return messages, sorted by creation date
   // Accepts page in query string
   // Success:
@@ -45,16 +45,24 @@ module.exports.listMessagesInChat = async (req, res) => {
       .json(errorMessage);
     return;
   }
-  const messages = await Message.listMessagesPaginated(
-    req.params.chatId, 
-    req.query.page
-  );
+  let messages;
+  try {
+    messages = await Message.listMessagesPaginated(
+      req.params.chatId, 
+      req.query.page
+    );
+  } catch(error) {
+    // Log error and pass to default error handler
+    console.log(error);
+    next(error);
+    return;
+  }
   res
     .status(HttpStatus.OK)
     .json({messages: messages});
 };
 
-module.exports.listNewMessagesInChat = async (req, res) => {
+module.exports.listNewMessagesInChat = async (req, res, next) => {
   // Return messages created at or after passed date
   // Expects date in query string
   // Success:
@@ -106,18 +114,26 @@ module.exports.listNewMessagesInChat = async (req, res) => {
       .json(errorMessage);
     return;
   }
-  // Get new messages
-  const messages = await Message.listNewMessages(
-    req.params.chatId, 
-    req.query.date
-  );
+  let messages;
+  try {
+    // Get new messages
+    messages = await Message.listNewMessages(
+      req.params.chatId, 
+      req.query.date
+    );
+  } catch (error) {
+    // Log error and pass to default error handler
+    console.log(error);
+    next(error);
+    return;
+  }
   res
     .status(HttpStatus.OK)
     .json({messages: messages});
 };
 
 
-module.exports.getChatWithMessages = async (req, res) => {
+module.exports.getChatWithMessages = async (req, res, next) => {
   // Return chat with first page of messages
   // Success:
   // Returns 200 OK
@@ -167,10 +183,18 @@ module.exports.getChatWithMessages = async (req, res) => {
       .json(errorMessage);
     return;
   }
-  const messages = await Message.listMessagesPaginated(
-    req.params.chatId, 
-  );
-  const chat = await Chat.findByIdWithUsers(req.params.chatId);
+  let messages, chat;
+  try {
+    messages = await Message.listMessagesPaginated(
+      req.params.chatId, 
+    );
+    chat = await Chat.findByIdWithUsers(req.params.chatId);
+  } catch (error) {
+    // Log error and pass to default error handler
+    console.log(error);
+    next(error);
+    return;
+  }
   res
     .status(HttpStatus.OK)
     .json({
@@ -179,7 +203,7 @@ module.exports.getChatWithMessages = async (req, res) => {
     });
 };
 
-module.exports.sendMessage = async (req, res) => {
+module.exports.sendMessage = async (req, res, next) => {
   // Send message to chat
   // Expects request:
   // {
@@ -231,16 +255,25 @@ module.exports.sendMessage = async (req, res) => {
       .json(errorMessage);
     return;
   }
-  let message = Message({
-    text: messageText,
-    author: req.user._id,
-    chat: req.params.chatId
-  });
-  await message.save();
-  // Populate author and convert to json
-  message = await Message
-     .findById(message.id)
-     .populate({ path: 'author', select: 'nickname _id' });
+  let message;
+  try {
+    // Create message
+    message = Message({
+      text: messageText,
+      author: req.user._id,
+      chat: req.params.chatId
+    });
+    await message.save();
+    // Populate author and convert to json
+    message = await Message
+      .findById(message.id)
+      .populate({ path: 'author', select: 'nickname _id' });
+  } catch (error) {
+    // Log error and pass to default error handler
+    console.log(error);
+    next(error);
+    return;
+  }
   res
     .status(HttpStatus.OK)
     .json({message: message});

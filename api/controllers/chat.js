@@ -9,7 +9,7 @@ const modelErrors = require('../models/errors'),
 const Chat = mongoose.model('Chat'),
   User = mongoose.model('User');
 
-module.exports.searchByName = async (req, res) => {
+module.exports.searchByName = async (req, res, next) => {
   // Return chats filtered by name
   // TODO: refactor to share same code with UserController.searchByNickname
   // Expects name in query parameters
@@ -54,17 +54,17 @@ module.exports.searchByName = async (req, res) => {
     // Manually remove score from response
     chats = utils.formatListResponse(chats, ['name']);
   } catch (error) {
-    // Unexpected error occured
-    // Better fail fast
+    // Log error and pass to default error handler
     console.log(error);
-    throw error;
+    next(error);
+    return;
   }
   res
     .status(HttpStatus.OK)
     .json({chats: chats});  
 };
 
-module.exports.createGroupChat = async (req, res) => {
+module.exports.createGroupChat = async (req, res, next) => {
   // Create group chat with provided name
   // Expects requests in format:
   // {
@@ -100,10 +100,11 @@ module.exports.createGroupChat = async (req, res) => {
     chat = await Chat
       .create({ name: name, isGroupChat: true });
   } catch (error) {
-    console.log(error);
     if (!(modelErrors.isDuplicateKeyError(error))) {
-      // Rethrow unknown error
-      throw error;
+      // Log error and pass to default error handler
+      console.log(error);
+      next(error);
+      return;
     }
     const errorResp = {
       errors: {
@@ -121,7 +122,7 @@ module.exports.createGroupChat = async (req, res) => {
     .json(updatedChat);
 };
 
-module.exports.createPrivateChat = async (req, res) => {
+module.exports.createPrivateChat = async (req, res, next) => {
   // Create private chat between current user
   // and user in params. Using this api, one can also create
   // chat with himself
@@ -162,22 +163,23 @@ module.exports.createPrivateChat = async (req, res) => {
   );
   // Check if chat between this users already exist
   let chat;
+  const conditions = {
+    $and: [
+      { isGroupChat: false },
+      ...userIdsInChat.map(
+        (userId) => ({'users': userId})
+      )
+    ]
+  };
   try {
-    const conditions = {
-      $and: [
-        { isGroupChat: false },
-        ...userIdsInChat.map(
-          (userId) => ({'users': userId})
-        )
-      ]
-    };
     chat = await Chat
       .findOne(conditions)
       .exec();
   } catch (error) {
-    // Log and re-throw error
+    // Log error and pass to default error handler
     console.log(error);
-    throw error;
+    next(error);
+    return;
   }
   // Return already created chat if found
   if (chat) {
@@ -208,23 +210,26 @@ module.exports.createPrivateChat = async (req, res) => {
       .json(errorMessage);
     return;
   }
-  // Create new chat
+  let updatedChat;
   try {
+    // Create new chat
     chat = await Chat
       .create({isGroupChat: false});
+    // Join new chat
+    updatedChat = await User
+      .joinChatForMultipleUsers(usersInChat, chat);
   } catch (error) {
-    // Log and re-throw error
+    // Log error and pass to default error handler
     console.log(error);
-    throw error;
+    next(error);
+    return;
   }
-  // Join new chat
-  const updatedChat = await User.joinChatForMultipleUsers(usersInChat, chat);
   res
     .status(HttpStatus.OK)
     .json(updatedChat);
 };
 
-module.exports.joinGroupChat = async (req, res) => {
+module.exports.joinGroupChat = async (req, res, next) => {
   // Join group chat
   // Success:
   // Returns 200 OK
@@ -246,8 +251,16 @@ module.exports.joinGroupChat = async (req, res) => {
   //   }
   // }
   const chatId = req.params.id;
-  // Validate, that chat exists
-  const chat = await Chat.findById(chatId);
+  // Validate that chat exists
+  let chat;
+  try {
+    chat = await Chat.findById(chatId);
+  } catch(error) {
+    // Log error and pass to default error handler
+    console.log(error);
+    next(error);
+    return;
+  }
   if (!(chat)) {
     const errorMessage = {
       errors: {
@@ -271,13 +284,19 @@ module.exports.joinGroupChat = async (req, res) => {
       .json(errorMessage);
     return;
   }
-  // Join chat
-  let updatedChat = await User.addUserToChatById(req.user._id, chat);
-  // Enrich user details
-  updatedChat = await Chat.findByIdWithUsers(chat._id);
+  let updatedChat;
+  try {
+    // Join chat
+    updatedChat = await User.addUserToChatById(req.user._id, chat);
+    // Enrich user details
+    updatedChat = await Chat.findByIdWithUsers(chat._id);
+  } catch (error) {
+    // Log error and pass to default error handler
+    console.log(error);
+    next(error);
+    return;
+  }
   res
     .status(HttpStatus.OK)
     .json(updatedChat);
 };
-
-
