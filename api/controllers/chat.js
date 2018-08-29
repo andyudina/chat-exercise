@@ -93,7 +93,15 @@ module.exports.createGroupChat = async (req, res, next) => {
       .status(HttpStatus.UNPROCESSABLE_ENTITY)
       .json(errorResp);
   }
-  const updatedChat = await User.addUserToChatById(req.user._id, chat);
+  let updatedChat;
+  try {
+    updatedChat = await User.addUserToChatById(req.user._id, chat);
+  } catch (error) {
+    // Pass to default error handler
+    // It's ok to fail here, if user with this id doesn't exist in
+    // app database - it would meen that app db and sessions db is out of sync
+    return next(error);
+  }
   res
     .status(HttpStatus.OK)
     .json(updatedChat);

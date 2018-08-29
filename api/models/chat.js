@@ -60,13 +60,9 @@ ChatSchema.statics = {
     // Find chat by id
     // Populate users details
     const User = mongoose.model('User');
-    const chat = await this
+    return await this
       .findById(chatId)
       .populate({ path: 'users', select: User.FIELDS_SHORT });
-    if (!(chat)) {
-      throw new Error(`User with id ${chatId} does not exist`);
-    }
-    return chat;
   }
 };
 

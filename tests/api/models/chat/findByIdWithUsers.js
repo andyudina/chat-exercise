@@ -17,18 +17,6 @@ describe('findByIdWithUsers - static api for Chat model', () => {
 
   beforeEach(testUtils.createChatAndUser.bind(this));
 
-  it('Throw error if chat does not exist', async () => {
-    const ChatMock = sinon.mock(Chat);
-    ChatMock.expects('findByIdWithUsers').once().throws();
-    try {
-      await Chat.findByIdWithUsers(mongoose.Types.ObjectId().toString());
-    } catch (error) {
-      // Skip this section
-      // Error will be verified by mock
-    }
-    ChatMock.verify();
-  });
-
   it('Populate user data', async () => {
     await Chat.findByIdAndUpdate(
       this.chat._id,
