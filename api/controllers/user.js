@@ -136,7 +136,6 @@ module.exports.getAllChatsForUser = async (req, res, next) => {
   //       _id: String,
   //       name: String,
   //       isGroupChat: Boolean,
-  //       lastMessageAt: Date,
   //       users: [
   //         {
   //           _id: String,
@@ -154,7 +153,6 @@ module.exports.getAllChatsForUser = async (req, res, next) => {
     // Load chat details
     chats = await Chat
       .find({ _id: { $in: user.chats } })
-      .sort({ lastMessageAt: -1})
       .select({ _id: 1, name: 1, isGroupChat: 1, lastMessageAt: 1, users: 1 })
       .populate({ path: 'users', select: User.FIELDS_SHORT })
       .exec();

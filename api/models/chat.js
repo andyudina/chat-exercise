@@ -17,9 +17,6 @@ const ChatSchema = new Schema({
     type: Boolean,
     default: false
   },
-  lastMessageAt: {
-    type: Date
-  },
   createdAt: {
     type: Date,
     default : Date.now
