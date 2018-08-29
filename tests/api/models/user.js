@@ -218,32 +218,6 @@ describe('hasAccessToChat - static api for User model', () => {
   });
 });
 
-describe('getUsersMap - static api for User model', () => {
-  before((done) => {
-    testUtils.setUpDbBeforeTest(done);
-  });
-
-  beforeEach(testUtils.createUser.bind(this));
-
-  it('Returns valid map', async () => {
-    const userMap = await User.getUsersMap([this.user.id]);
-    const expectedUser = {
-      _id: this.user.id,
-      nickname: this.user.nickname
-    };
-    expect(userMap.get(this.user.id)).to.be.deep.equal(expectedUser);
-  });
-
-  afterEach(async () => {
-    sinon.restore();
-    await User.remove({}).exec();
-  });
-
-  after((done) => {
-    testUtils.cleanAndCloseDbAfterTest(done);
-  });
-});
-
 /*
 
  Model APIs
