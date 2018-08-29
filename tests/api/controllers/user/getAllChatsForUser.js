@@ -8,8 +8,7 @@ const expect = require('chai').expect,
 const Chat = require('../../../../api/models/chat'),
   User = require('../../../../api/models/user'),
   UserController = require('../../../../api/controllers/user'),
-  testUtils = require('../../../_utils'),
-  utils = require('../../../../utils');
+  testUtils = require('../../../_utils');
 
 describe('Get all chats for current user', () => {
   before((done) => {
@@ -98,7 +97,7 @@ describe('Get all chats for current user', () => {
     };
     const receivedResponse = jsonSpy.getCall(0).args[0];
     expect(
-      utils.toJSON(receivedResponse)
+      testUtils.toJSON(receivedResponse)
     ).to.be.deep.equal(expectedResponse);
   });
 

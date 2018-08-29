@@ -6,8 +6,7 @@ const mongoose = require('mongoose'),
 const config = require('../config'),
   Chat = require('../api/models/chat'),
   Message = require('../api/models/message'),
-  User = require('../api/models/user'),
-  utils = require('../utils');
+  User = require('../api/models/user');
 
 const setUpDbBeforeTest = (done) => {
   // Connect to mongoDB
@@ -75,6 +74,10 @@ function setUpControllerTests() {
   this.res = res;
 }
 
+const toJSON = (objects) => {
+  return JSON.parse(JSON.stringify(objects));
+};
+
 async function setUpControllerTestsWithUser() {
   // Set up environment for controller tests and create user
 
@@ -85,7 +88,7 @@ async function setUpControllerTestsWithUser() {
   // Now this function is dependant on setUpControllerTests
   // implementation
   setUpControllerTests.bind(this)();
-  this.req.user = utils.toJSON(this.user);
+  this.req.user = toJSON(this.user);
 }
 
 
@@ -150,5 +153,7 @@ module.exports = {
   createMessages,
 
   stubStatus,
-  replaceJsonWithSpy
+  replaceJsonWithSpy,
+
+  toJSON
 }

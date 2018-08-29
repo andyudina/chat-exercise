@@ -7,8 +7,7 @@ const expect = require('chai').expect,
 const Chat = require('../../../../api/models/chat'),
   ChatController = require('../../../../api/controllers/chat'),
   User = require('../../../../api/models/user'),
-  testUtils = require('../../../_utils'),
-  utils = require('../../../../utils');
+  testUtils = require('../../../_utils');
 
 describe('Join group chat', () => {
   before((done) => {
@@ -70,7 +69,7 @@ describe('Join group chat', () => {
     ];
     const receivedResult = jsonSpy.getCall(0).args[0].users;
     expect(
-      utils.toJSON(receivedResult)
+      testUtils.toJSON(receivedResult)
     ).to.be.deep.equal(expectedUsersResult);
   });
 

@@ -7,7 +7,6 @@ const expect = require('chai').expect,
 const Chat = require('../../../../api/models/chat'),
   User = require('../../../../api/models/user'),
   Message = require('../../../../api/models/message'),
-  utils = require('../../../../utils'),
   testUtils = require('../../../_utils');
 
 describe('listMessagesPaginated static api for Message model', () => {
@@ -76,7 +75,7 @@ describe('listMessagesPaginated static api for Message model', () => {
         _id: message.id
       })
     );
-    expect(utils.toJSON(results)).to.deep.equal(expectedResults);
+    expect(testUtils.toJSON(results)).to.deep.equal(expectedResults);
   });
 
   afterEach(async () => {

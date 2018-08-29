@@ -20,7 +20,3 @@ module.exports.formatListResponse = (list, fields) => {
     )
   );
 };
-
-module.exports.toJSON = (objects) => {
-  return JSON.parse(JSON.stringify(objects));
-};
