@@ -5,6 +5,7 @@ const { query, body } = require('express-validator/check');
 
 const apiRequiresAuthentication = require('../../middleware/authenticate').apiRequiresAuthentication,
   authorizeAccessToChat = require('../../middleware/authorize').authorizeAccessToChat,
+  errorMessages = require('../errorMessages'),
   MessageController = require('../controllers/message'),
   UserController = require('../controllers/user'),
   validateRequest = require('../../middleware/validate').validateRequest;
@@ -21,7 +22,7 @@ userRouter.route('/')
   .put(
     apiRequiresAuthentication,
     [
-      body('nickname', 'This field is required').exists(),
+      body('nickname', errorMessages.FIELD_IS_MISSING).exists(),
     ],
     validateRequest,
     UserController.setNickname);
@@ -30,7 +31,7 @@ userRouter.route('/')
   .get(
     apiRequiresAuthentication,
     [
-      query('nickname', 'This field is required').exists(),
+      query('nickname', errorMessages.FIELD_IS_MISSING).exists(),
     ],
     validateRequest,
     UserController.searchByNickname);
@@ -66,7 +67,7 @@ userRouter.route('/self/chats/:chatId([a-f\\d]{24})/messages')
     authorizeAccessToChat,
     // Specify validation
     [
-      body('message', 'This field is required').exists(),
+      body('message', errorMessages.FIELD_IS_MISSING).exists(),
     ],
     validateRequest,
     MessageController.sendMessage);
@@ -78,7 +79,7 @@ userRouter.route('/self/chats/:chatId([a-f\\d]{24})/messages/new')
     apiRequiresAuthentication,
     authorizeAccessToChat,
     [
-      query('date', 'This field is required').exists(),
+      query('date', errorMessages.FIELD_IS_MISSING).exists(),
     ],
     validateRequest,
     MessageController.listNewMessagesInChat);

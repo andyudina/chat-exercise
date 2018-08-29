@@ -3,7 +3,8 @@
 const HttpStatus = require('http-status-codes'),
   mongoose = require('mongoose');
 
-const modelErrors = require('../models/errors'),
+const errorMessages = require('../errorMessages'),
+  modelErrors = require('../models/errors'),
   utils = require('../../utils');
 
 const Chat = mongoose.model('Chat'),
@@ -86,7 +87,7 @@ module.exports.createGroupChat = async (req, res, next) => {
     }
     const errorResp = {
       errors: {
-        name: 'Group chat with this name already exists'
+        name: errorMessages.GROUP_CHAT_ALREADY_EXISTS
       }
     };
     return res
@@ -169,7 +170,7 @@ module.exports.createPrivateChat = async (req, res, next) => {
     // Return error if not all users were found
     const errorMessage = {
       errors: {
-        user: 'This user does not exist'
+        user: errorMessages.USER_DOES_NOT_EXIST
       }
     };
     return res
@@ -227,7 +228,7 @@ module.exports.joinGroupChat = async (req, res, next) => {
   if (!(chat)) {
     const errorMessage = {
       errors: {
-        chat: 'Group chat with this id does not exists'
+        chat: errorMessages.GROUP_CHAT_DOES_NOT_EXIST
       }
     };
     return res
@@ -238,7 +239,7 @@ module.exports.joinGroupChat = async (req, res, next) => {
   if (!(chat.isGroupChat)) {
     const errorMessage = {
       errors: {
-        chat: 'Unfortunately, you can not join private chat'
+        chat: errorMessages.CAN_NOT_JOIN_PRIVATE_CHAT
       }
     };
     return res

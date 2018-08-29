@@ -30,16 +30,6 @@ module.exports.setNickname = async (req, res, next) => {
   //   }
   // }
   const nickname = req.body.nickname;
-  if (!(nickname)) {
-    const errorMessage = {
-      errors: {
-        nickname: 'This field is required'
-      }
-    };
-    return res
-      .status(HttpStatus.BAD_REQUEST)
-      .json(errorMessage);
-  }
   let user;
   try {
     user = await User.findByIdAndUpdate(

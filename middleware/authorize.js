@@ -3,6 +3,8 @@
 const HttpStatus = require('http-status-codes'),
   mongoose = require('mongoose');
 
+const errorMessages = require('../api/errorMessages');
+
 module.exports.authorizeAccessToChat = async (req, res, next) => {
   // Check if user can have access to chat
   // Return 401 unauthorised error, if user is not authenticated
@@ -21,7 +23,7 @@ module.exports.authorizeAccessToChat = async (req, res, next) => {
   if (!(userHasAccessToChatFlag)) {
     const errorMessage = {
       errors: {
-        chat: 'Unfortunately you can not access this chat'
+        chat: errorMessages.NO_ACCESS_TO_CHAT
       }
     };
     return res

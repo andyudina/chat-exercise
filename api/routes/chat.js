@@ -5,6 +5,7 @@ const { query, body } = require('express-validator/check');
 
 const apiRequiresAuthentication = require('../../middleware/authenticate').apiRequiresAuthentication,
   ChatController = require('../controllers/chat'),
+  errorMessages = require('../errorMessages'),
   validateRequest = require('../../middleware/validate').validateRequest;
 
 const chatRouter = express.Router();
@@ -13,7 +14,7 @@ chatRouter.route('/')
   .get(
     apiRequiresAuthentication,
     [
-      query('name', 'This field is required').exists(),
+      query('name', errorMessages.FIELD_IS_MISSING).exists(),
     ],
     validateRequest,
     ChatController.searchByName
@@ -23,7 +24,7 @@ chatRouter.route('/group/')
   .post(
     apiRequiresAuthentication,
     [
-      body('name', 'This field is required').exists(),
+      body('name', errorMessages.FIELD_IS_MISSING).exists(),
     ],
     validateRequest,
     ChatController.createGroupChat
@@ -33,7 +34,7 @@ chatRouter.route('/private/')
   .post(
     apiRequiresAuthentication,
     [
-      body('user', 'This field is required').exists(),
+      body('user', errorMessages.FIELD_IS_MISSING).exists(),
     ],
     validateRequest,
     ChatController.createPrivateChat);
