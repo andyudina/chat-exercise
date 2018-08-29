@@ -3,10 +3,13 @@
 
 const express = require('express');
 
-const userRoutes = require('./user');
-const chatRoutes = require('./chat');
+const authenticate = require('../../middleware/authenticate');
+
+const userRoutes = require('./user'),
+  chatRoutes = require('./chat');
 
 const apiRoutes = express.Router();
+apiRoutes.use(authenticate);
 apiRoutes.use('/users', userRoutes);
 apiRoutes.use('/chats', chatRoutes);
 

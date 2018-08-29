@@ -3,7 +3,7 @@
 const expect = require('chai').expect,
   sinon = require('sinon');
 
-const apiRequiresAuthentication = require('../../middleware/authenticate').apiRequiresAuthentication;
+const authenticate = require('../../middleware/authenticate');
 
 describe('Ensure user authentication', () => {
 
@@ -12,7 +12,7 @@ describe('Ensure user authentication', () => {
     const req = {
       isAuthenticated() {return true}
     };
-    apiRequiresAuthentication(req, null, nextSpy);
+    authenticate(req, null, nextSpy);
     expect(nextSpy.calledOnce).to.be.true;
   });
 
@@ -26,7 +26,7 @@ describe('Ensure user authentication', () => {
     };
     const statusSpy = sinon.spy();
     sinon.replace(res, 'status', statusSpy);
-    apiRequiresAuthentication(req, res, null);
+    authenticate(req, res, null);
     expect(statusSpy.withArgs(403).calledOnce).to.be.true;
   });
 

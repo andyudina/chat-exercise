@@ -4,7 +4,7 @@ const expect = require('chai').expect,
   expressValidator = require('express-validator/check'),
   sinon = require('sinon');
 
-const validateRequest = require('../../middleware/validate').validateRequest;
+const validate = require('../../middleware/validate');
 
 describe('Validate request format', () => {
 
@@ -18,7 +18,7 @@ describe('Validate request format', () => {
     const validationResultStub = sinon.stub().returns(errors);
     sinon.replace(expressValidator, 'validationResult', validationResultStub);
 
-    validateRequest(null, null, nextSpy);
+    validate(null, null, nextSpy);
     expect(nextSpy.calledOnce).to.be.true;
   });
 
@@ -39,7 +39,7 @@ describe('Validate request format', () => {
     const statusStub = sinon.stub().returns(res);
     sinon.replace(res, 'status', statusStub);
 
-    validateRequest(null, res, null);
+    validate(null, res, null);
     expect(statusStub.withArgs(400).calledOnce).to.be.true;
   });
 
@@ -61,7 +61,7 @@ describe('Validate request format', () => {
     const jsonSpy = sinon.spy();
     sinon.replace(res, 'json', jsonSpy);
 
-    validateRequest(null, res, null);
+    validate(null, res, null);
     expect(jsonSpy.withArgs({errors: errorArray}).calledOnce).to.be.true;
   });
 

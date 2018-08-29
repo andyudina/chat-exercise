@@ -3,7 +3,7 @@
 const HttpStatus = require('http-status-codes'),
   expressValidator = require('express-validator/check');
 
-module.exports.validateRequest = (req, res, next) => {
+module.exports = (req, res, next) => {
   // Check if there is validation errors
   // Return errors if found
   // Proceed with request otherwise
