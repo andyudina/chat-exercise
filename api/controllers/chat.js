@@ -12,7 +12,6 @@ const Chat = mongoose.model('Chat'),
 
 module.exports.searchByName = async (req, res, next) => {
   // Return chats filtered by name
-  // TODO: refactor to share same code with UserController.searchByNickname
   // Expects name in query parameters
   // Success:
   // Returns 200 OK

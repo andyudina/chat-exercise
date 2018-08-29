@@ -10,7 +10,7 @@ const Chat = require('../../../../api/models/chat'),
   testUtils = require('../../../_utils');
 
 describe('Get chat with messages', () => {
-  // TODO: refactor to share common logic with listMessagesInChat
+
   before((done) => {
     testUtils.setUpDbBeforeTest(done);
   });

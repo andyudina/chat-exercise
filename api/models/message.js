@@ -43,8 +43,8 @@ MessageSchema.statics = {
   async listNewMessages(chatId, lastDate) {
     // List new chat messages
     // created after or at lastDate
-    // TODO: can two writes occur at exact time?
-    // if yes, using $gt can lead to missed messages
+    // Two messages can have at exact createdAt time, so $gte
+    // is used to avoid loosing messages
     return await this
       .listMessagesWithAuthor(chatId, { createdAt: { $gte: lastDate }})
       .limit(config.messagePageSize) // Send only first page of messages

@@ -10,7 +10,7 @@ const Chat = require('../../../../api/models/chat'),
   testUtils = require('../../../_utils');
 
 describe('Send message to chat', () => {
-  // TODO: refactor to share common logic with listMessagesInChat
+
   async function testReturnedMessage() {
     // Helper function to intercept returned message
     // on successful creation
