@@ -27,7 +27,7 @@ describe('Ensure user authentication', () => {
     const statusSpy = sinon.spy();
     sinon.replace(res, 'status', statusSpy);
     apiRequiresAuthentication(req, res, null);
-    expect(statusSpy.withArgs(401).calledOnce).to.be.true;
+    expect(statusSpy.withArgs(403).calledOnce).to.be.true;
   });
 
   afterEach(() => {
