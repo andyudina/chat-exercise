@@ -39,6 +39,7 @@ describe('addUser api for chat model', () => {
   it('Throw error if db request failed', async () => {
     const findOneAndUpdateStub = sinon.stub().throws();
     sinon.replace(Chat, 'findOneAndUpdate', findOneAndUpdateStub);
+
     const chatMock = sinon.mock(this.chat);
     chatMock.expects('addUser').once().throws();
     try {

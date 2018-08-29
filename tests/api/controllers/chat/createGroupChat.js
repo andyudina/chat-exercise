@@ -19,8 +19,9 @@ describe('Create new group chat', () => {
   
   it('200 OK returned if chat created successfully', async () => {
     this.req.body.name = 'new test';
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+
+    const statusStub = testUtils.stubStatus(this.res);
+
     await ChatController.createGroupChat(this.req, this.res);
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
@@ -29,8 +30,9 @@ describe('Create new group chat', () => {
     const name = 'test';
     this.req.body.name = name;
     await Chat.create({name: name});
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+
+    const statusStub = testUtils.stubStatus(this.res);
+
     await ChatController.createGroupChat(this.req, this.res);
     expect(statusStub.withArgs(422).calledOnce).to.be.true;
   });
@@ -46,8 +48,9 @@ describe('Create new group chat', () => {
   it('Chat returned if created successfully', async () => {
     const name = 'test';
     this.req.body.name = name;
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
+
     await ChatController.createGroupChat(this.req, this.res);
     expect(jsonSpy.getCall(0).args[0].name).to.be.equal(name);
   });
@@ -66,8 +69,9 @@ describe('Create new group chat', () => {
     const name = 'test';
     this.req.body.name = name;
     await Chat.create({name: name});
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
+
     await ChatController.createGroupChat(this.req, this.res);
     const errors = {
       errors: {

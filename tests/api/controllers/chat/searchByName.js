@@ -19,14 +19,17 @@ describe('Search by name', () => {
   
   it('200 OK returned if request completed successfully', async () => {
     this.req.query.name = 'test';
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+
+    const statusStub = testUtils.stubStatus(this.res);
+
     await ChatController.searchByName(this.req, this.res);
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
 
   it('Chats returned successfully', async () => {
     const name = 'test';
+    this.req.query.name = name;
+
     const firstMatchChat = Chat({
       name: 'test',
     });
@@ -39,9 +42,9 @@ describe('Search by name', () => {
       name: 'no match',
     });
     await noMatchChat.save();
-    this.req.query.name = name;
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
+
     await ChatController.searchByName(this.req, this.res);
     const expectedResponse = {
       chats: [

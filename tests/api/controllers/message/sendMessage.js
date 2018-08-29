@@ -21,11 +21,10 @@ describe('Send message to chat', () => {
       chatId: this.chat.id
     };
 
-    const jsonStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'json', jsonStub);
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
 
     await MessageController.sendMessage(this.req, this.res);
-    return jsonStub.getCall(0).args[0].message;
+    return jsonSpy.getCall(0).args[0].message;
   };
 
   before((done) => {
@@ -42,8 +41,7 @@ describe('Send message to chat', () => {
       chatId: this.chat.id
     };
 
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+    const statusStub = testUtils.stubStatus(this.res);
 
     await MessageController.sendMessage(this.req, this.res);
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
@@ -57,8 +55,7 @@ describe('Send message to chat', () => {
       chatId: this.chat.id
     };
 
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+    const statusStub = testUtils.stubStatus(this.res);
 
     await MessageController.sendMessage(this.req, this.res);
 

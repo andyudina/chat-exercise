@@ -22,8 +22,9 @@ describe('Join group chat', () => {
     this.req.params = {
       id: this.chat.id
     };
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+
+    const statusStub = testUtils.stubStatus(this.res);
+
     await ChatController.joinGroupChat(this.req, this.res);
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
@@ -32,8 +33,9 @@ describe('Join group chat', () => {
     this.req.params = {
       id: mongoose.Types.ObjectId().toString()
     };
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+
+    const statusStub = testUtils.stubStatus(this.res);
+
     await ChatController.joinGroupChat(this.req, this.res);
     expect(statusStub.withArgs(422).calledOnce).to.be.true;
   });
@@ -43,9 +45,6 @@ describe('Join group chat', () => {
       id: this.chat.id
     };
 
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-    
     const joinChatSpy = sinon.stub().returns(this.chat);
     sinon.replace(User.prototype, 'joinChat', joinChatSpy);
     await ChatController.joinGroupChat(this.req, this.res);
@@ -59,8 +58,7 @@ describe('Join group chat', () => {
       id: this.chat.id
     };
 
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
 
     await ChatController.joinGroupChat(this.req, this.res);
 
@@ -80,8 +78,9 @@ describe('Join group chat', () => {
     this.req.params = {
       id: mongoose.Types.ObjectId().toString()
     };
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
+
     await ChatController.joinGroupChat(this.req, this.res);
     const errors = {
       errors: {
@@ -96,8 +95,9 @@ describe('Join group chat', () => {
       id: this.chat.id
     };
     await Chat.findByIdAndUpdate(this.chat._id, {isGroupChat: false});
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
+
     await ChatController.joinGroupChat(this.req, this.res);
     const errors = {
       errors: {

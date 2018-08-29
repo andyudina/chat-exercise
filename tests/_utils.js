@@ -1,6 +1,7 @@
 "use strict";
 
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
+  sinon = require('sinon');
 
 const config = require('../config'),
   Chat = require('../api/models/chat'),
@@ -121,6 +122,19 @@ async function createMessages() {
   this.messages = await Message.insertMany(messageDocs);
 }
 
+const stubStatus = (res) => {
+  // Helper to stub status method
+  const statusStub = sinon.stub().returns(res);
+  sinon.replace(res, 'status', statusStub);
+  return statusStub;
+};
+
+const replaceJsonWithSpy = (res) => {
+  // Helper to to replace json method of response with spy
+  const jsonSpy = sinon.spy();
+  sinon.replace(res, 'json', jsonSpy);
+  return jsonSpy;
+};
 
 module.exports = {
   setUpDbBeforeTest,
@@ -132,5 +146,8 @@ module.exports = {
 
   createUser,
   createChatAndUser,
-  createMessages
+  createMessages,
+
+  stubStatus,
+  replaceJsonWithSpy
 }

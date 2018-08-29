@@ -19,8 +19,7 @@ describe('List new messages', () => {
   it('200 OK returned if request completed successfully', async () => {
     this.req.query.date = '2018-08-28T13:09:58.073Z';
 
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+    const statusStub = testUtils.stubStatus(this.res);
 
     await MessageController.listNewMessagesInChat(this.req, this.res);
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
@@ -39,11 +38,10 @@ describe('List new messages', () => {
       listNewMessagesStub
     );
 
-    const jsonStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'json', jsonStub);
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
 
     await MessageController.listNewMessagesInChat(this.req, this.res);
-    expect(jsonStub.withArgs({messages: []}).calledOnce).to.be.true;
+    expect(jsonSpy.withArgs({messages: []}).calledOnce).to.be.true;
   });
 
   it('Date is passed to listMessages function ', async () => {

@@ -28,8 +28,7 @@ describe('Get chat with messages', () => {
       findByIdWithUsersStub
     );
 
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+    const statusStub = testUtils.stubStatus(this.res);
 
     await MessageController.getChatWithMessages(this.req, this.res);
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
@@ -56,11 +55,10 @@ describe('Get chat with messages', () => {
       findByIdWithUsersStub
     );
 
-    const jsonStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'json', jsonStub);
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
 
     await MessageController.getChatWithMessages(this.req, this.res);
-    expect(jsonStub.withArgs({messages: [], chat: {}}).calledOnce).to.be.true;
+    expect(jsonSpy.withArgs({messages: [], chat: {}}).calledOnce).to.be.true;
   });
 
   afterEach(async () => {

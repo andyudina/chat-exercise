@@ -19,15 +19,15 @@ describe('Get current user', () => {
   beforeEach(testUtils.setUpControllerTestsWithUser.bind(this));
 
   it('200 OK returned if current user retrieved successfully', async () => {
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+    const statusStub = testUtils.stubStatus(this.res);
+
     await UserController.getCurrentUser(this.req, this.res);
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
 
   it('User returned on successful request', async () => {
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
+
     await UserController.getCurrentUser(this.req, this.res);
     expect(jsonSpy.getCall(0).args[0].id).to.be.equal(this.user.id);
   });

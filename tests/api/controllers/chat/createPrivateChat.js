@@ -21,8 +21,9 @@ describe('Create new private chat', () => {
     this.req.body = {
       user: this.user.id
     };
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+
+    const statusStub = testUtils.stubStatus(this.res);
+
     await ChatController.createPrivateChat(this.req, this.res);
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
@@ -31,8 +32,9 @@ describe('Create new private chat', () => {
     this.req.body = {
       user: mongoose.Types.ObjectId().toString()
     };
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+
+    const statusStub = testUtils.stubStatus(this.res);
+
     await ChatController.createPrivateChat(this.req, this.res);
     expect(statusStub.withArgs(422).calledOnce).to.be.true;
   });
@@ -64,8 +66,9 @@ describe('Create new private chat', () => {
     this.req.body = {
       user: this.user.id
     };
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
+
     await ChatController.createPrivateChat(this.req, this.res);
     expect(
       jsonSpy.getCall(0).args[0].users[0].toString()
@@ -83,8 +86,7 @@ describe('Create new private chat', () => {
       user: this.user.id
     };
 
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
 
     await ChatController.createPrivateChat(this.req, this.res);
     expect(jsonSpy.getCall(0).args[0].id).to.be.equal(chat.id);
@@ -94,8 +96,9 @@ describe('Create new private chat', () => {
     this.req.body = {
       user: mongoose.Types.ObjectId().toString()
     };
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
+
     await ChatController.createPrivateChat(this.req, this.res);
     const errors = {
       errors: {

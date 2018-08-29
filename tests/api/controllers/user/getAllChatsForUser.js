@@ -19,8 +19,8 @@ describe('Get all chats for current user', () => {
   beforeEach(testUtils.setUpControllerTestsWithUser.bind(this));
   
   it('200 OK returned if request completed successfully', async () => {
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+    const statusStub = testUtils.stubStatus(this.res);
+
     await UserController.getAllChatsForUser(this.req, this.res);
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
@@ -63,8 +63,7 @@ describe('Get all chats for current user', () => {
         }
       }).exec();
 
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
 
     await UserController.getAllChatsForUser(this.req, this.res);
 

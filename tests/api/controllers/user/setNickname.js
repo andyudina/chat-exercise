@@ -20,8 +20,9 @@ describe('Set user nickname', () => {
   
   it('200 OK returned if nickname updated successfully', async () => {
     this.req.body.nickname = 'test';
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
+
+    const statusStub = testUtils.stubStatus(this.res);
+
     await UserController.setNickname(this.req, this.res);
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
@@ -38,8 +39,9 @@ describe('Set user nickname', () => {
   it('Updated user returned if nickname updated successfully', async () => {
     const nickname = 'test';
     this.req.body.nickname = nickname;
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
+
+    const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
+
     await UserController.setNickname(this.req, this.res);
     expect(jsonSpy.getCall(0).args[0].nickname).to.be.equal(nickname);
   });
