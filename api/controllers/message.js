@@ -26,24 +26,13 @@ module.exports.listMessagesInChat = async (req, res, next) => {
   //  ]
   // ]
   // Error:
-  // Returns 403 Forbidden
+  // Returns 401 Unauthorized
   // if user don't have access to the chat
   // {
   //   errors: {
   //     [field]: [errorMessage]
   //   }
   // }
-  // Check if user has access to this chat
-  if (!(await User.hasAccessToChat(req.user._id, req.params.chatId))) {
-    const errorMessage = {
-      errors: {
-        chat: 'Unfortunately you can not access this chat'
-      }
-    };
-    return res
-      .status(HttpStatus.FORBIDDEN)
-      .json(errorMessage);
-  }
   let messages;
   try {
     messages = await Message.listMessagesPaginated(
@@ -78,7 +67,7 @@ module.exports.listNewMessagesInChat = async (req, res, next) => {
   //  ]
   // ]
   // Error:
-  // Returns 403 Forbidden
+  // Returns 401 Unauthorized
   // if user don't have access to the chat
   // Returns 400 Bad request if date is't provided
   // {
@@ -90,17 +79,6 @@ module.exports.listNewMessagesInChat = async (req, res, next) => {
   //     }
   //   ]
   // }
-  // Check if user has access to this chat
-  if (!(await User.hasAccessToChat(req.user._id, req.params.chatId))) {
-    const errorMessage = {
-      errors: {
-        chat: 'Unfortunately you can not access this chat'
-      }
-    };
-    return res
-      .status(HttpStatus.FORBIDDEN)
-      .json(errorMessage);
-  }
   let messages;
   try {
     // Get new messages
@@ -147,26 +125,13 @@ module.exports.getChatWithMessages = async (req, res, next) => {
   //  ]
   // ]
   // Error:
-  // Returns 403 Forbidden
+  // Returns 401 Unauthorized
   // if user don't have access to the chat
   // {
   //   errors: {
   //     [field]: [errorMessage]
   //   }
   // }
-  // Check if user has access to this chat
-  // TODO: move to own authorization middleware - 
-  // reuse same logic with listMessagesInChat
-  if (!(await User.hasAccessToChat(req.user._id, req.params.chatId))) {
-    const errorMessage = {
-      errors: {
-        chat: 'Unfortunately you can not access this chat'
-      }
-    };
-    return res
-      .status(HttpStatus.FORBIDDEN)
-      .json(errorMessage);
-  }
   let messages, chat;
   try {
     messages = await Message.listMessagesPaginated(
@@ -200,8 +165,13 @@ module.exports.sendMessage = async (req, res, next) => {
   //   }
   // }
   // Error:
-  // Returns 403 Forbidden
+  // Returns 401 Unauthorized
   // if user don't have access to the chat
+  // {
+  //   errors: {
+  //     [field]: [errorMessage]
+  //   }
+  // }
   // Returns 400 Bad request if message is't provided
   // {
   //   errors: [
@@ -212,17 +182,6 @@ module.exports.sendMessage = async (req, res, next) => {
   //     }
   //   ]
   // }
-  // Validate that user has access to chat
-  if (!(await User.hasAccessToChat(req.user._id, req.params.chatId))) {
-    const errorMessage = {
-      errors: {
-        chat: 'Unfortunately you can not access this chat'
-      }
-    };
-    return res
-      .status(HttpStatus.FORBIDDEN)
-      .json(errorMessage);
-  }
   const messageText = req.body.message;
   let message;
   try {

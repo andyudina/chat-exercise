@@ -25,13 +25,6 @@ describe('Search by name', () => {
     expect(statusStub.withArgs(200).calledOnce).to.be.true;
   });
 
-  it('400 Bad request returned if no name provided', async () => {
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-    await ChatController.searchByName(this.req, this.res);
-    expect(statusStub.withArgs(400).calledOnce).to.be.true;
-  });
-
   it('Chats returned successfully', async () => {
     const name = 'test';
     const firstMatchChat = Chat({
@@ -63,18 +56,6 @@ describe('Search by name', () => {
       ]
     };
     expect(jsonSpy.withArgs(expectedResponse).calledOnce).to.be.true;
-  });
-
-  it('Validation errors returned if name is not provided', async () => {
-    const jsonSpy = sinon.spy();
-    sinon.replace(this.res, 'json', jsonSpy);
-    await ChatController.searchByName(this.req, this.res);
-    const errors = {
-      errors: {
-        name: 'This field is required'
-      }
-    };
-    expect(jsonSpy.withArgs(errors).calledOnce).to.be.true;
   });
 
   afterEach(async () => {

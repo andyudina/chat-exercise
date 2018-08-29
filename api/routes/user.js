@@ -4,6 +4,7 @@ const express = require('express');
 const { query, body } = require('express-validator/check');
 
 const apiRequiresAuthentication = require('../../middleware/authenticate').apiRequiresAuthentication,
+  authorizeAccessToChat = require('../../middleware/authorize').authorizeAccessToChat,
   MessageController = require('../controllers/message'),
   UserController = require('../controllers/user'),
   validateRequest = require('../../middleware/validate').validateRequest;
@@ -48,10 +49,16 @@ userRouter.route('/self/chats')
 */
 
 userRouter.route('/self/chats/:chatId')
-  .get(apiRequiresAuthentication, MessageController.getChatWithMessages);
+  .get(
+    apiRequiresAuthentication,
+    authorizeAccessToChat,
+    MessageController.getChatWithMessages);
 
 userRouter.route('/self/chats/:chatId/messages')
-  .get(apiRequiresAuthentication, MessageController.listMessagesInChat);
+  .get(
+    apiRequiresAuthentication,
+    authorizeAccessToChat,
+    MessageController.listMessagesInChat);
 
 userRouter.route('/self/chats/:chatId/messages')
   .post(
@@ -61,6 +68,7 @@ userRouter.route('/self/chats/:chatId/messages')
       body('message', 'This field is required').exists(),
     ],
     validateRequest,
+    authorizeAccessToChat,
     MessageController.sendMessage);
 
 // Returns new messages
@@ -72,6 +80,7 @@ userRouter.route('/self/chats/:chatId/messages/new')
       query('date', 'This field is required').exists(),
     ],
     validateRequest,
+    authorizeAccessToChat,
     MessageController.listNewMessagesInChat);
 
 module.exports = userRouter;

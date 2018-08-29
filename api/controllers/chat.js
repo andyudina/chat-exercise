@@ -31,16 +31,6 @@ module.exports.searchByName = async (req, res, next) => {
   //   }
   // }
   const name = req.query.name;
-  if (!(name)) {
-    const errorMessage = {
-      errors: {
-        name: 'This field is required'
-      }
-    };
-    return res
-      .status(HttpStatus.BAD_REQUEST)
-      .json(errorMessage);
-  }
   let chats;
   try {
     chats = await Chat

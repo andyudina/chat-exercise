@@ -17,9 +17,6 @@ describe('List paginated message', () => {
   beforeEach(testUtils.setUpControllerTestsWithUser.bind(this));
 
   it('200 OK returned if request completed successfully', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
     const statusStub = sinon.stub().returns(this.res);
     sinon.replace(this.res, 'status', statusStub);
     await MessageController.listMessagesInChat(this.req, this.res);
@@ -27,9 +24,6 @@ describe('List paginated message', () => {
   });
 
   it('Messages returned if request completed successfully', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
     const listMessagesPaginatedStub =
       sinon
         .stub()
@@ -47,31 +41,6 @@ describe('List paginated message', () => {
     expect(jsonStub.withArgs({messages: []}).calledOnce).to.be.true;
   });
 
-  it('403 forbidden returned if user don\'t have access to to chat', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(false);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-    await MessageController.listMessagesInChat(this.req, this.res);
-    expect(statusStub.withArgs(403).calledOnce).to.be.true;
-  });
-
-  it('Error returned if user don\'t have access to to chat', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(false);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
-    const jsonStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'json', jsonStub);
-
-    await MessageController.listMessagesInChat(this.req, this.res);
-    expect(jsonStub.withArgs({
-      errors: {
-        chat: 'Unfortunately you can not access this chat'
-      }
-    }).calledOnce).to.be.true;
-  });
-
   it('Page is passed to listMessages function ', async () => {
     const chatId = 'test-chat-id';
     const page = 1;
@@ -81,9 +50,6 @@ describe('List paginated message', () => {
     this.req.query = {
       page: page
     };
-
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
 
     const listMessagesPaginatedStub = sinon.stub().returns([]);
     sinon.replace(
@@ -118,9 +84,6 @@ describe('List new messages', () => {
   it('200 OK returned if request completed successfully', async () => {
     this.req.query.date = '2018-08-28T13:09:58.073Z';
 
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
     const statusStub = sinon.stub().returns(this.res);
     sinon.replace(this.res, 'status', statusStub);
 
@@ -130,9 +93,6 @@ describe('List new messages', () => {
 
   it('Messages returned if request completed successfully', async () => {
     this.req.query.date = '2018-08-28T13:09:58.073Z';
-
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
 
     const listNewMessagesStub =
       sinon
@@ -151,32 +111,6 @@ describe('List new messages', () => {
     expect(jsonStub.withArgs({messages: []}).calledOnce).to.be.true;
   });
 
-  it('403 forbidden returned if user don\'t have access to to chat', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(false);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-
-    await MessageController.listNewMessagesInChat(this.req, this.res);
-    expect(statusStub.withArgs(403).calledOnce).to.be.true;
-  });
-
-  it('Error returned if user don\'t have access to to chat', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(false);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
-    const jsonStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'json', jsonStub);
-
-    await MessageController.listNewMessagesInChat(this.req, this.res);
-    expect(jsonStub.withArgs({
-      errors: {
-        chat: 'Unfortunately you can not access this chat'
-      }
-    }).calledOnce).to.be.true;
-  });
-
   it('Date is passed to listMessages function ', async () => {
     const chatId = 'test-chat-id';
     const date = '2018-08-28T13:09:58.073Z';;
@@ -186,9 +120,6 @@ describe('List new messages', () => {
     this.req.query = {
       date: date
     };
-
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
 
     const listNewMessagesStub =
       sinon
@@ -225,9 +156,6 @@ describe('Get chat with messages', () => {
   beforeEach(testUtils.setUpControllerTestsWithUser.bind(this));
 
   it('200 OK returned if request completed successfully', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
     const findByIdWithUsersStub =
       sinon
         .stub()
@@ -246,9 +174,6 @@ describe('Get chat with messages', () => {
   });
 
   it('Chat and messages returned if request completed successfully', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
     const listMessagesPaginatedStub =
       sinon
         .stub()
@@ -276,32 +201,6 @@ describe('Get chat with messages', () => {
     expect(jsonStub.withArgs({messages: [], chat: {}}).calledOnce).to.be.true;
   });
 
-  it('403 forbidden returned if user don\'t have access to to chat', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(false);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-
-    await MessageController.getChatWithMessages(this.req, this.res);
-    expect(statusStub.withArgs(403).calledOnce).to.be.true;
-  });
-
-  it('Error returned if user don\'t have access to to chat', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(false);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
-    const jsonStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'json', jsonStub);
-
-    await MessageController.getChatWithMessages(this.req, this.res);
-    expect(jsonStub.withArgs({
-      errors: {
-        chat: 'Unfortunately you can not access this chat'
-      }
-    }).calledOnce).to.be.true;
-  });
-
   afterEach(async () => {
     await User.remove({}).exec();
     sinon.restore();
@@ -317,9 +216,6 @@ describe('Send message to chat', () => {
   async function testReturnedMessage() {
     // Helper function to intercept returned message
     // on successful creation
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
     this.req.body = {
       message: 'test'
     };
@@ -341,9 +237,6 @@ describe('Send message to chat', () => {
   beforeEach(testUtils.setUpControllerTestsWithUserAndChat.bind(this));
 
   it('200 OK returned if request completed successfully', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
     this.req.body = {
       message: 'test'
     };
@@ -359,9 +252,6 @@ describe('Send message to chat', () => {
   });
 
   it('Message created successfully', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(true);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
     this.req.body = {
       message: 'test'
     };
@@ -388,31 +278,6 @@ describe('Send message to chat', () => {
   it('Author of created message returned if request completed successfully', async () => {
     const sendMessage = await testReturnedMessage.bind(this)();
     expect(sendMessage.author.nickname).to.be.equal(this.user.nickname);
-  });
-
-  it('403 forbidden returned if user don\'t have access to to chat', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(false);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
-    const statusStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'status', statusStub);
-    await MessageController.sendMessage(this.req, this.res);
-    expect(statusStub.withArgs(403).calledOnce).to.be.true;
-  });
-
-  it('Error returned if user don\'t have access to to chat', async () => {
-    const hasAccessToChatStub = sinon.stub().returns(false);
-    sinon.replace(User, 'hasAccessToChat', hasAccessToChatStub);
-
-    const jsonStub = sinon.stub().returns(this.res);
-    sinon.replace(this.res, 'json', jsonStub);
-
-    await MessageController.sendMessage(this.req, this.res);
-    expect(jsonStub.withArgs({
-      errors: {
-        chat: 'Unfortunately you can not access this chat'
-      }
-    }).calledOnce).to.be.true;
   });
 
   afterEach(async () => {
