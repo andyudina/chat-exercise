@@ -139,7 +139,7 @@ module.exports.getAllChatsForUser = async (req, res, next) => {
   let chats;
   try {
     // Get user chats
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     // Load chat details
     chats = await Chat
       .find({ _id: { $in: user.chats } })

@@ -6,7 +6,8 @@ const mongoose = require('mongoose'),
 const config = require('../config'),
   Chat = require('../api/models/chat'),
   Message = require('../api/models/message'),
-  User = require('../api/models/user');
+  User = require('../api/models/user'),
+  utils = require('../utils');
 
 const setUpDbBeforeTest = (done) => {
   // Connect to mongoDB
@@ -84,7 +85,7 @@ async function setUpControllerTestsWithUser() {
   // Now this function is dependant on setUpControllerTests
   // implementation
   setUpControllerTests.bind(this)();
-  this.req.user = this.user;
+  this.req.user = utils.toJSON(this.user);
 }
 
 
