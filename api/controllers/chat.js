@@ -126,12 +126,8 @@ module.exports.createPrivateChat = async (req, res, next) => {
   const user = req.body.user;
   // Remove duplicates - we don't want to query db twice
   // to create chat with same user
-  let userIdsInChat = [...new Set([user, req.user._id.toString()])];
-  // Convert to ObjectID
-  userIdsInChat = userIdsInChat.map(
-    (id) => mongoose.mongo.ObjectId(id)
-  );
-  // Check if chat between this users already exist
+  const userIdsInChat = [...new Set([user, req.user._id.toString()])];
+  // Check if chat between these users already exist
   let chat;
   const conditions = {
     $and: [

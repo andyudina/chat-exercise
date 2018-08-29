@@ -50,9 +50,8 @@ UserSchema.methods = {
   async addChat(chatId) {
     // Add chatId to chats if not exist
     // Return updated user
-    const chatIdAsObjectId = mongoose.mongo.ObjectId(chatId);
     const update = {
-      $addToSet: { chats: chatIdAsObjectId }
+      $addToSet: { chats: chatId }
     };
     try {
       // TODO what if user don't have chats array?
@@ -142,8 +141,8 @@ UserSchema.statics = {
     // Verify that user is in chat users
     const userCount = await this.count(
       {
-        _id: mongoose.mongo.ObjectId(userId),
-        chats: mongoose.mongo.ObjectId(chatId),
+        _id: userId,
+        chats: chatId
       }
     );
     return userCount > 0;

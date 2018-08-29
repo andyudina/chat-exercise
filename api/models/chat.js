@@ -38,9 +38,8 @@ ChatSchema.methods = {
   async addUser(userId) {
     // Add userId to users if not exist
     // Return updated chat
-    const userIdAsObjectId = mongoose.mongo.ObjectId(userId);
     const update = {
-      $addToSet: { users: userIdAsObjectId }
+      $addToSet: { users: userId }
     };
     try {
       // TODO what if chat don't have users array?
