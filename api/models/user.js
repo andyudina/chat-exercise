@@ -36,6 +36,14 @@ const UserSchema = new Schema({
     ],
     default: []
   }
+},
+{
+  toObject: {
+    virtuals: false
+  },
+  toJSON: {
+    virtuals: false
+  }
 });
 
 UserSchema.methods = {
@@ -141,6 +149,15 @@ UserSchema.statics = {
     return userCount > 0;
   },
 };
+
+/*
+
+Constants
+
+*/
+
+// Fields that are used with populate
+UserSchema.statics.FIELDS_SHORT = 'nickname _id';
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;

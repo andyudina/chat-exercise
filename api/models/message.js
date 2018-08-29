@@ -56,6 +56,7 @@ MessageSchema.statics = {
     // filtered messages with populated author
     // after resolve
     // TODO cover with tests
+    const User = mongoose.model('User');
     return this
       .find(
         { 
@@ -66,7 +67,7 @@ MessageSchema.statics = {
         }
       )
       .sort({ createdAt: -1 })
-      .populate({ path: 'author', select: 'nickname _id' })
+      .populate({ path: 'author', select: User.FIELDS_SHORT })
       .select({_id: 1, author: 1, createdAt: 1, text: 1});
   },
 

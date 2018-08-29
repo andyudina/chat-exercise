@@ -195,7 +195,7 @@ module.exports.sendMessage = async (req, res, next) => {
     // Populate author and convert to json
     message = await Message
       .findById(message.id)
-      .populate({ path: 'author', select: 'nickname _id' });
+      .populate({ path: 'author', select: User.FIELDS_SHORT });
   } catch (error) {
     // Pass to default error handler
     return next(error);

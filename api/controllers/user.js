@@ -156,7 +156,7 @@ module.exports.getAllChatsForUser = async (req, res, next) => {
       .find({ _id: { $in: user.chats } })
       .sort({ lastMessageAt: -1})
       .select({ _id: 1, name: 1, isGroupChat: 1, lastMessageAt: 1, users: 1 })
-      .populate({ path: 'users', select: 'nickname _id' })
+      .populate({ path: 'users', select: User.FIELDS_SHORT })
       .exec();
   } catch (error) {
     // Pass to default error handler

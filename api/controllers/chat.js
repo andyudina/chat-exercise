@@ -81,8 +81,8 @@ module.exports.createGroupChat = async (req, res, next) => {
       .create({ name: name, isGroupChat: true });
   } catch (error) {
     if (!(modelErrors.isDuplicateKeyError(error))) {
-    // Pass to default error handler
-    return next(error);
+      // Pass to default error handler
+      return next(error);
     }
     const errorResp = {
       errors: {
