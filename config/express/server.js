@@ -2,10 +2,12 @@
 "use strict";
 
 const bodyParser = require('body-parser'),
+  express = require('express'),
   logger = require('morgan'),
   session = require('express-session'),
   cookieParser = require('cookie-parser'),
-  cookieSession = require('cookie-session');
+  cookieSession = require('cookie-session'),
+  path = require('path');
 
 const mongoStore = require('connect-mongo')(session);
 
@@ -32,4 +34,11 @@ module.exports = (app, passport) => {
   app.use(passport.session());
 
   app.use(logger('dev'));
+
+  // Serve static files
+  app.use(
+    express.static(
+      path.join(__dirname, '../../client/build')
+    )
+  );
 };
