@@ -17,7 +17,7 @@ const userRouter = express.Router();
 
 */
 
-userRouter.route('/')
+userRouter.route('/self')
   .put(
     [
       body('nickname', errorMessages.FIELD_IS_MISSING).exists(),

@@ -16,7 +16,7 @@
 Throw 403 forbidden, if user is not authrosied
 
 - get /users/self/ -> get information about current user
-- put /users/ -> create nickname
+- put /users/self/ -> create nickname
 
 - get /chats/?name=name -> get chats or users with name
 - post /chats/group/ -> create group chat
