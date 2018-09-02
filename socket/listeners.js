@@ -15,7 +15,7 @@ module.exports = (io) => {
     // Send message
     socket.on(
       'new message',
-      (chat) => socketEvents.sendMessage(io, chat)
+      (chat) => socketEvents.newMessage(io, chat)
     );
   });
 };

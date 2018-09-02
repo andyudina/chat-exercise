@@ -19,21 +19,6 @@ const authConfig = require('./config/passport/google').configure,
 // Configure authorisation with passport
 authConfig(passport);
 
-// Configure server
-const app = express();
-serverConfig(app, passport);
-
-// Configure routes to be served
-router(app);
-
-// Register simple error handler that returns 500
-// and logs error
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500);
-  res.end();
-});
-
 // Connect to mongoDB
 const connect = () => {
   mongoose.connect(config.db, { useNewUrlParser: true });
@@ -47,10 +32,22 @@ connect();
 
 // Start express app on successful connection
 const setUpServer = () => {
+  // Configure server
+  const app = express();
+  serverConfig(app, passport);
   // Start server
   const server = app.listen(config.port, config.host);
   // Configure socket.io
   socket(server);
+  // Configure routes to be served
+  router(app);
+  // Register simple error handler that returns 500
+  // and logs error
+  app.use((err, req, res, next) => {
+    console.log(err);
+    res.status(500);
+    res.end();
+  });
   console.log(`Express app started on ${config.host}:${config.port}`);
 }
 mongoose.connection.once('open', setUpServer);
