@@ -19,7 +19,7 @@ describe('listMessagesPaginated static api for Message model', () => {
   it('Messages returned correctly', async () => {
     const messages = await Message.listMessagesPaginated(this.chat.id, 2);
     // Get texts from messages
-    const texts = messages.map(message => message.text);
+    const texts = messages.messages.map(message => message.text);
     // Verify that messages returned in correct order
     const expectedTexts = [
       '9',
@@ -39,7 +39,7 @@ describe('listMessagesPaginated static api for Message model', () => {
   it('First page of messages returned if no page provided', async () => {
     const messages = await Message.listMessagesPaginated(this.chat.id);
     // Get texts from messages
-    const texts = messages.map(message => message.text);
+    const texts = messages.messages.map(message => message.text);
     // Verify that messages returned in correct order
     const expectedTexts = [
       '19',
@@ -56,10 +56,15 @@ describe('listMessagesPaginated static api for Message model', () => {
     expect(texts).to.deep.equal(expectedTexts);
   });
 
+  it('Correct flag returned if next page exists', async () => {
+    const messages = await Message.listMessagesPaginated(this.chat.id);
+    expect(messages.hasNextPage).to.deep.true;
+  });
+
   it('Messages populated with extra data correctly', async () => {
     const messages = await Message.listMessagesPaginated(this.chat.id);
     // Get authors and ids from messages
-    const results = messages.map(
+    const results = messages.messages.map(
       message => ({
         author: message.author,
         _id: message._id

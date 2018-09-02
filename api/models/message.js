@@ -32,12 +32,18 @@ const MessageSchema = new Schema({
 MessageSchema.statics = {
   async listMessagesPaginated(chatId, page) {
     // List paginated chat messages
+    // Returns object with messages and flag that shows
+    // if next page exists
     page = page || 1;
     const query = this
       .listMessagesWithAuthor(chatId)
       .skip(config.messagePageSize * (page - 1))
-      .limit(config.messagePageSize);
-    return await query.exec();
+      .limit(config.messagePageSize + 1);
+    const messages = await query.exec();
+    return {
+      messages: messages.slice(0, config.messagePageSize),
+      hasNextPage: messages.length === config.messagePageSize + 1
+    };
   },
 
   async listNewMessages(chatId, lastDate) {

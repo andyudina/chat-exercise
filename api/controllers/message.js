@@ -23,8 +23,9 @@ module.exports.listMessagesInChat = async (req, res, next) => {
   //         nickname: String
   //       }
   //     }
-  //  ]
-  // ]
+  //   ],
+  //   hasNextPage: Boolean
+  // }
   // Error:
   // Returns 401 Unauthorized
   // if user don't have access to the chat
@@ -45,7 +46,10 @@ module.exports.listMessagesInChat = async (req, res, next) => {
   }
   res
     .status(HttpStatus.OK)
-    .json({ messages });
+    .json({
+      messages: messages.messages,
+      hasNextPage: messages.hasNextPage
+    });
 };
 
 module.exports.listNewMessagesInChat = async (req, res, next) => {
@@ -64,8 +68,8 @@ module.exports.listNewMessagesInChat = async (req, res, next) => {
   //         nickname: String
   //       }
   //     }
-  //  ]
-  // ]
+  //   ],
+  // }
   // Error:
   // Returns 401 Unauthorized
   // if user don't have access to the chat
@@ -122,8 +126,9 @@ module.exports.getChatWithMessages = async (req, res, next) => {
   //         nickname: String
   //       }
   //     }
-  //  ]
-  // ]
+  //   ],
+  //   hasNextPage: Boolean
+  // }
   // Error:
   // Returns 401 Unauthorized
   // if user don't have access to the chat
@@ -144,7 +149,11 @@ module.exports.getChatWithMessages = async (req, res, next) => {
   }
   res
     .status(HttpStatus.OK)
-    .json({ messages, chat });
+    .json({
+      messages: messages.messages,
+      chat: chat,
+      hasNextPage: messages.hasNextPage
+    });
 };
 
 module.exports.sendMessage = async (req, res, next) => {

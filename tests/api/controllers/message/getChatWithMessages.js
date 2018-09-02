@@ -38,7 +38,7 @@ describe('Get chat with messages', () => {
     const listMessagesPaginatedStub =
       sinon
         .stub()
-        .returns(Promise.resolve([]));
+        .returns(Promise.resolve({messages: [], hasNextPage: false}));
     sinon.replace(
       Message, 
       'listMessagesPaginated', 
@@ -58,7 +58,7 @@ describe('Get chat with messages', () => {
     const jsonSpy = testUtils.replaceJsonWithSpy(this.res);
 
     await MessageController.getChatWithMessages(this.req, this.res);
-    expect(jsonSpy.withArgs({messages: [], chat: {}}).calledOnce).to.be.true;
+    expect(jsonSpy.withArgs({messages: [], hasNextPage: false, chat: {}}).calledOnce).to.be.true;
   });
 
   afterEach(async () => {
