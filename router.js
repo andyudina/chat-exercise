@@ -13,6 +13,7 @@ const router = (app)  => {
   // TODO - refactor, server should not know anything about client urls
   // However serving static files for all unknown urls interfere with sockrt.io
   app.use('/chat/:id', express.static(__dirname + '/client/build'));
+  app.use('/set-nickname', express.static(__dirname + '/client/build'));
 };
 
 module.exports = router;
