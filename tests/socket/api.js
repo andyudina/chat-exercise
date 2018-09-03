@@ -3,7 +3,7 @@
 const expect = require('chai').expect,
   sinon = require('sinon');
 
-const socketEvents = require('../../socket/events');
+const socketEvents = require('../../socket/api');
 
 describe('Join chat', () => {
 

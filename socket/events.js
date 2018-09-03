@@ -1,23 +1,21 @@
 "use strict";
 
-module.exports.joinChat = (socket, chat) => {
-  if (socket.chat) {
-    // User already joined chat
-    // Leave previous chat first
-    socket.leave(socket.chat);
-  }
-  socket.chat = chat;
-  socket.join(chat);
-};
+const socketApi = require('./api');
 
-module.exports.leaveChat = (socket, chat) => {
-  socket.leave(chat);
-};
+module.exports = (io) => {
 
-module.exports.newMessage = (io, chat) => {
-  // Announce that new message is created in chat
-  // TODO rewrite to create message right from socket listeners
-  // That will help to avoid extra requests
-  io.sockets.in(chat).emit('refresh messages', chat);
-};
+  // Set up socket.io listeners
+  io.on('connection', (socket) => {
+    // Join chat
+    socket.on('join chat', (chat) => socketApi.joinChat(socket, chat));
 
+    // Leave chat
+    socket.on('leave chat', (chat) => socketApi.leaveChat(socket, chat));
+
+    // Send message
+    socket.on(
+      'new message',
+      (chat) => socketApi.newMessage(io, chat)
+    );
+  });
+};

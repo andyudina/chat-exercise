@@ -1,9 +1,9 @@
 "use strict";
 
-const socketEventListeners = require('./listeners');
+const socketEvents = require('./events');
 
 module.exports = (server) => {
   // Configure  socket.io connection
   const io = require('socket.io').listen(server);
-  socketEventListeners(io);
+  socketEvents(io);
 };
