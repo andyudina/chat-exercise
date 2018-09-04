@@ -37,7 +37,7 @@ How to install the app
 
 ## Next steps
 
-What is missing for production deployment
+What is missing for production
 
 1. Unit tests for React components and integration tests
 2. Rewrite back-end tests, so they are not dependant on database
@@ -45,3 +45,4 @@ What is missing for production deployment
 4. Rethink UI/UX. Support mobile platforms
 5. Set up development environment using Docker
 6. Set up CI pipeline
+7. Refactor routing: set up reverse-proxy to serve statics and forward /api and /auth requests to nodejs servers. This will allow to get rid off submodules 
