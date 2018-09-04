@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-  db: process.env.MONGOHQ_URL,
+  db: process.env.MONGODB_URL,
   google: {
     clientID: process.env.GOOGLE_CLIENTID,
     clientSecret: process.env.GOOGLE_SECRET,
