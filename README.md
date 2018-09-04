@@ -1,51 +1,47 @@
-## RESTful backend for simple chat
+# Simple chat service
 
+Full-stack chat implementation. User can choose nickname, join group chat and send message to another user. Back-end: nodejs, express, mongodb + mongoose. Front-end: react/redux. Socket.io
 
-### Functional requirements:
-1. Sign up/ log in with google oath
-2. Create nickname on sign up
-3. Search -> find user by nickname or find group chat by nickname
-4. Create group chat
-5. Join group chat
-6. List recent group and private chats
-7. Send message to chat
-8. List messages from chat/group
+## Getting started
 
+How to install the app
 
-## APIs
-Throw 403 forbidden, if user is not authrosied
+### Prerequisites
 
-- get /users/self/ -> get information about current user
-- put /users/self/ -> create nickname
+1. Install Nodejs https://nodejs.org/en/download/
+2. Install MongoDB https://docs.mongodb.com/v3.2/installation/
+3. Get google credentials for authentication through google oauth: https://console.cloud.google.com/apis/credentials
 
-- get /chats/?name=name -> get chats or users with name
-- post /chats/group/ -> create group chat
-- post /chats/private/ -> start chat with user
-- put /chats/[chat-id]/ -> join group chat
+### Installing
 
-- get /users/self/chats/ -> get all chats of the user
+1. Clone this repo with submodules ```git clone  --recursive git@github.com:andyudina/chat-exercise.git```
+2. Install dependenices for back-end and front-end: ```npm install && cd client && npm install```
 
-- get /users/self/chats/[chat-id]/messages/?page=page -> paginated list messages
-- get /users/self/chats/[chat-id]/ -> get chat info and first page of messages
-- post /users/self/chats/[chat-id]/messages/ -> create a message
+## Running app locally
 
+1. Running mongodn server using command ```mongod``` https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/
+2. Set up environment variables. Back-end app depends on several environment variables, preferable way of setting them up is to create .env file in root directory. Required variables are:
+2.1. GOOGLE_CLIENTID and GOOGLE_SECRET - credentials, obtained through google console, needed for authentication
+2.2. MONGODB_URL - mongodb connection string (https://docs.mongodb.com/manual/reference/connection-string/). Usually looks like ```mongodb://localhost/[your-db-name]```
+2.3. SESSION_SECRET - the secret is used to hash the session, protected against session hijacking.
+3. Start back-end dev server by running ```npm start```
+4. Run webpack to build front-end app: ```cd client && npm start```
+5. By default app will be served at http://localhost:3000/
 
-## Models
+## How to use
 
-* User
-    * nickname
-    * email
-    * chats [ [uuid] ]
-    * createdAt
+1. Log in with Google - user will be redirected to google authentication when he enters app first time (and any next time without cookies)
+2. Choose nickname - on welcome screen user is prompted to choose nickname. User can also stay without nickname, then other users will see him as "Anonymous" in group conversations, and won't be able to start private chat with him
+3. Join group chat - user can search group chat by name. User can join any chat from search results. Also user can create group chat with specific name
+4. Start chat with other user - user can search for others by nickname and start chat with anyone (even with himself)
 
-* Chat
-    * users: [ [uuid] ]
-    * name
-    * isGroupChat
-    * createdAt
+## Next steps
 
-* Message
-    * chat (uuid)
-    * text
-    * author (uuid)
-    * createdAt
+What is missing for production deployment
+
+1. Unit tests for React components and integration tests
+2. Rewrite back-end tests, so they are not dependant on database
+3. App level documentation and API descriptions
+4. Rethink UI/UX. Support mobile platforms
+5. Set up development environment using Docker
+6. Set up CI pipeline
