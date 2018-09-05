@@ -21,9 +21,13 @@ How to install the app
 
 1. Running mongodn server using command ```mongod``` https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/
 2. Set up environment variables. Back-end app depends on several environment variables, preferable way of setting them up is to create .env file in root directory. Required variables are:
-2.1. GOOGLE_CLIENTID and GOOGLE_SECRET - credentials, obtained through google console, needed for authentication
-2.2. MONGODB_URL - mongodb connection string (https://docs.mongodb.com/manual/reference/connection-string/). Usually looks like ```mongodb://localhost/[your-db-name]```
-2.3. SESSION_SECRET - the secret is used to hash the session, protected against session hijacking.
+
+   2.1. GOOGLE_CLIENTID and GOOGLE_SECRET - credentials, obtained through google console, needed for authentication
+
+   2.2. MONGODB_URL - mongodb connection string (https://docs.mongodb.com/manual/reference/connection-string/). Usually looks like ```mongodb://localhost/[your-db-name]```
+  
+   2.3. SESSION_SECRET - the secret is used to hash the session, protected against session hijacking.
+
 3. Start back-end dev server by running ```npm start```
 4. Run webpack to build front-end app: ```cd client && npm start```
 5. By default app will be served at http://localhost:3000/
