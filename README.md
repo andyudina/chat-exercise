@@ -16,6 +16,7 @@ How to install the app
 
 1. Clone this repo with submodules ```git clone  --recursive git@github.com:andyudina/chat-exercise.git```
 2. Install dependenices for back-end and front-end: ```npm install && cd client && npm install```
+3. Install globally nodemon and webpack: ```npm install -g nodemon webpack```
 
 ## Running app locally
 
